@@ -1,5 +1,6 @@
 import express from 'express'
 import { NODE_ENV, PORT } from './src/config/env.js';
+import connectDatabase from './src/config/database.js';
 
 
 
@@ -25,4 +26,5 @@ app.get('/', (req, res) => {
 
 const server = app.listen(PORT, () => {
   console.log(`🚀 Server running in ${NODE_ENV} mode on port ${PORT}`);
+  connectDatabase();
 });
