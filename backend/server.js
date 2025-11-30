@@ -1,6 +1,8 @@
 import express from 'express'
 import { NODE_ENV, PORT } from './src/config/env.js';
 import connectDatabase from './src/config/database.js';
+import authRouter from './src/routes/auth.route.js';
+import { errorHandler, notFound } from './src/middleware/error.middleware.js';
 
 
 
@@ -15,6 +17,9 @@ app.get('/health', (req, res) => {
   });
 });
 
+app.use(express.json());
+
+app.use('/api/v1/auth',authRouter);
 
 app.get('/', (req, res) => {
   res.status(200).json({
@@ -24,6 +29,14 @@ app.get('/', (req, res) => {
   });
 });
 
+
+//404 not found
+app.use(notFound);
+//
+//error middleware
+app.use(errorHandler);
+
+//server
 const server = app.listen(PORT, () => {
   console.log(`🚀 Server running in ${NODE_ENV} mode on port ${PORT}`);
   connectDatabase();
