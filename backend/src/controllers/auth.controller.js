@@ -27,6 +27,11 @@ const signUp = asyncHandler(async(req,res)=>{
     if(!fullName || !email || !password || !confirmPassword){
         throw new AppError("All fields are required", 400);
     };
+
+    if(password !== confirmPassword){
+       throw new AppError("Passwords do not match", 400);
+    }
+
     if(!validator.isEmail(email)){
         throw new AppError("Invalid Email", 400);
     };

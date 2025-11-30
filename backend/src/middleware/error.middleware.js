@@ -9,7 +9,12 @@ export const notFound = (req, res, next) => {
 export const errorHandler = (err, req, res, next) => {
   if (res.headersSent) return next(err);
 
-  const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
+  const statusCode =
+    typeof err.statusCode === "number"
+      ? err.statusCode
+      : res.statusCode && res.statusCode !== 200
+      ? res.statusCode
+      : 500;
 
   if (process.env.NODE_ENV === "development") {
     console.error("Error:", { message: err.message, stack: err.stack });
@@ -17,7 +22,7 @@ export const errorHandler = (err, req, res, next) => {
 
   res.status(statusCode).json({
     success: false,
-    message: err.message,
+    message: err.message || "Internal Server Error",
     ...(process.env.NODE_ENV === "development" && { stack: err.stack }),
     ...(err.code && { code: err.code }),
   });
