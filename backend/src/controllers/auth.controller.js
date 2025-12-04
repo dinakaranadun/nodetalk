@@ -10,6 +10,8 @@ import {
   removeRefreshToken,
   verifyRefreshToken
 } from '../utils/token.js';
+import { sendWelcomeEmail } from '../config/resend.js';
+import { CLIENT_URL } from '../config/env.js';
 
 /**
  * @route   POST /api/v1/auth/signIn
@@ -79,6 +81,13 @@ const signUp = asyncHandler(async(req, res) => {
         fullName: user.fullName,
         email: user.email,
     });
+
+    try {
+        await sendWelcomeEmail(email, fullName, CLIENT_URL);
+        console.log(`${new Date().toISOString()} - ✅ Welcome email sent to ${email}`);
+    } catch (error) {
+        console.error("Failed to send welcome email:", error);
+    }
 });
 
 /**

@@ -1,4 +1,3 @@
-// middleware/auth.middleware.js
 import User from '../models/User.js';
 import { JWT_SECRET } from "../config/env.js";
 import AppError from "../utils/apperror.js";

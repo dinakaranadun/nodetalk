@@ -9,7 +9,11 @@ const requiredEnvVars = [
   'JWT_SECRET',
   'JWT_EXPIRES_IN',
   'JWT_REFRESH_SECRET',
-  'JWT_REFRESH_EXPIRES_IN'
+  'JWT_REFRESH_EXPIRES_IN',
+  'RESEND_API_KEY',
+  'CLIENT_URL',
+  'EMAIL_FROM',
+  'EMAIL_FROM_NAME'
 ];
 
 // Check for missing environment variables
@@ -31,5 +35,9 @@ export const {
   JWT_SECRET,
   JWT_EXPIRES_IN,
   JWT_REFRESH_SECRET,
-  JWT_REFRESH_EXPIRES_IN
+  JWT_REFRESH_EXPIRES_IN,
+  RESEND_API_KEY,
+  CLIENT_URL,
+  EMAIL_FROM,
+  EMAIL_FROM_NAME
 } = process.env;
