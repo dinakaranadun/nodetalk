@@ -1,4 +1,10 @@
+import escapeHtml from "../utils/escapeHtml.js";
+
 function welcomeEmailTemplate(name, clientUrl) {
+
+  const safeName = escapeHtml(name);
+  const safeUrl = escapeHtml(clientUrl);
+
   return `
   <!DOCTYPE html>
   <html>
@@ -6,7 +12,7 @@ function welcomeEmailTemplate(name, clientUrl) {
       <div style="max-width: 600px; margin: auto; background: #ffffff; padding: 25px; border-radius: 8px;">
         <h2 style="color: #138d00ff; text-align: center;">Welcome to NodeTalk 🎉</h2>
 
-        <p>Hi ${name},</p>
+        <p>Hi ${safeName},</p>
 
         <p>
           Welcome to <strong>NodeTalk</strong> — your new place for fast, secure, and real-time conversations!
@@ -18,7 +24,7 @@ function welcomeEmailTemplate(name, clientUrl) {
         </p>
 
         <div style="text-align: center; margin: 30px 0;">
-          <a href="${clientUrl}" 
+          <a href="${safeUrl}" 
              style="background: #138d00ff; color: #fff; padding: 12px 20px; text-decoration: none; border-radius: 6px; font-size: 16px;">
             Go to NodeTalk
           </a>

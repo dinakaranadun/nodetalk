@@ -76,17 +76,18 @@ const signUp = asyncHandler(async(req, res) => {
     generateAccessToken(res, user._id, user.tokenVersion);
     await generateRefreshToken(res, user._id, user.tokenVersion, req);
 
-    sendWelcomeEmail(email, fullName, CLIENT_URL)
-    .then(() => console.log('Email job completed'))
-    .catch(err => console.error('Email job failed', err));
-
     successResponse(res, 201, "Registration successful", {
         _id: user._id,
         fullName: user.fullName,
         email: user.email,
     });
 
-    
+    try {
+        await sendWelcomeEmail(email, fullName, CLIENT_URL);
+        console.log(`${new Date().toISOString()} - ✅ Welcome email sent to ${email}`);
+    } catch (error) {
+        console.error("Failed to send welcome email:", error);
+    }
 });
 
 /**
