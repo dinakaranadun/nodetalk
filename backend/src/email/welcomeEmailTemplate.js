@@ -1,5 +1,12 @@
 import escapeHtml from "../utils/escapeHtml.js";
 
+/**
+ * Generate an HTML welcome email for a new NodeTalk user.
+ *
+ * @param {string} name - Recipient's display name; will be HTML-escaped before insertion.
+ * @param {string} clientUrl - Destination URL for the call-to-action button; will be HTML-escaped before insertion.
+ * @returns {string} The complete HTML document for the welcome email, including a personalized greeting, a centered call-to-action button linking to the provided URL, and a footer showing the current year.
+ */
 function welcomeEmailTemplate(name, clientUrl) {
 
   const safeName = escapeHtml(name);
