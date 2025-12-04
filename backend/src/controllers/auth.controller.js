@@ -10,6 +10,8 @@ import {
   removeRefreshToken,
   verifyRefreshToken
 } from '../utils/token.js';
+import { sendWelcomeEmail } from '../config/resend.js';
+import { CLIENT_URL } from '../config/env.js';
 
 /**
  * @route   POST /api/v1/auth/signIn
@@ -74,11 +76,17 @@ const signUp = asyncHandler(async(req, res) => {
     generateAccessToken(res, user._id, user.tokenVersion);
     await generateRefreshToken(res, user._id, user.tokenVersion, req);
 
+    sendWelcomeEmail(email, fullName, CLIENT_URL)
+    .then(() => console.log('Email job completed'))
+    .catch(err => console.error('Email job failed', err));
+
     successResponse(res, 201, "Registration successful", {
         _id: user._id,
         fullName: user.fullName,
         email: user.email,
     });
+
+    
 });
 
 /**
