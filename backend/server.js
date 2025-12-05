@@ -3,10 +3,14 @@ import { NODE_ENV, PORT } from './src/config/env.js';
 import connectDatabase from './src/config/database.js';
 import authRouter from './src/routes/auth.route.js';
 import { errorHandler, notFound } from './src/middleware/error.middleware.js';
+import cookieParser from 'cookie-parser';
+import userRouter from './src/routes/user.route.js';
 
 
 
 const app = express();
+app.use(express.json());
+app.use(cookieParser());
 
 app.get('/health', (req, res) => {
   res.status(200).json({
@@ -17,9 +21,10 @@ app.get('/health', (req, res) => {
   });
 });
 
-app.use(express.json());
+
 
 app.use('/api/v1/auth',authRouter);
+app.use('/api/v1/user',userRouter)
 
 app.get('/', (req, res) => {
   res.status(200).json({

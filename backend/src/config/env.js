@@ -13,7 +13,10 @@ const requiredEnvVars = [
   'RESEND_API_KEY',
   'CLIENT_URL',
   'EMAIL_FROM',
-  'EMAIL_FROM_NAME'
+  'EMAIL_FROM_NAME',
+  'CLOUDINARY_CLOUD_NAME',
+  'CLOUDINARY_API_KEY',
+  'CLOUDINARY_API_SECRET'
 ];
 
 // Check for missing environment variables
@@ -39,5 +42,8 @@ export const {
   RESEND_API_KEY,
   CLIENT_URL,
   EMAIL_FROM,
-  EMAIL_FROM_NAME
+  EMAIL_FROM_NAME,
+  CLOUDINARY_CLOUD_NAME,
+  CLOUDINARY_API_KEY,
+  CLOUDINARY_API_SECRET
 } = process.env;
