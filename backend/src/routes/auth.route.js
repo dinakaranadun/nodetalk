@@ -5,7 +5,7 @@ import { arcjetAuth } from '../middleware/arcjet.middleware.js';
 
 const authRouter = express.Router();
 
-authRouter.get("/check-user", authMiddleware, (req, res) => {
+authRouter.get("/check-user", arcjetAuth,authMiddleware, (req, res) => {
     res.status(200).json({
         success: true,
         user: req.user
