@@ -1,13 +1,15 @@
-import User from '../models/User.js'; 
-import { JWT_SECRET } from "../config/env.js"; 
+import User from '../models/User.js';
+import { JWT_SECRET } from "../config/env.js";
 import AppError from "../utils/apperror.js";
-import { verifyRefreshToken, generateAccessToken } from "../utils/token.js"; 
+import { verifyRefreshToken, generateAccessToken } from "../utils/token.js";
 import jwt from 'jsonwebtoken';
 
 const authMiddleware = async (req, res, next) => {
   const { accessToken, refreshToken } = req.cookies;
 
   try {
+    let shouldTryRefresh = false;
+
     if (!accessToken && !refreshToken) {
       throw new AppError('Authentication required', 401);
     }
@@ -15,42 +17,50 @@ const authMiddleware = async (req, res, next) => {
     if (accessToken) {
       try {
         const decoded = jwt.verify(accessToken, JWT_SECRET);
+
         const user = await User.findById(decoded.userId).select('_id tokenVersion');
-        
+
         if (!user) {
           throw new AppError('User not found', 401);
         }
-        
+
         if (decoded.tokenVersion !== user.tokenVersion) {
           throw new AppError('Token invalidated', 401);
         }
 
-        req.user = { 
-          _id: user._id, 
-          tokenVersion: user.tokenVersion 
+        req.user = {
+          _id: user._id,
+          tokenVersion: user.tokenVersion
         };
+
         return next();
-        
+
       } catch (error) {
         if (error instanceof AppError) {
           throw error;
         }
 
+        // access token expired → try refresh next
         if (error.name === 'TokenExpiredError') {
-          throw new AppError("Access token expired", 401);
+          shouldTryRefresh = true;
+        } else {
+          throw new AppError("Invalid access token", 401);
         }
-
-        throw new AppError("Invalid access token", 401);
       }
     }
 
-    //  try refresh token
+
+    // no access token or expired
+  
     if (!refreshToken) {
-      throw new AppError('Session expired. Please login again', 401);
+      const message = shouldTryRefresh
+        ? "Access token expired"
+        : "Session expired. Please login again";
+      throw new AppError(message, 401);
     }
 
     const tokenData = await verifyRefreshToken(refreshToken);
-    
+
     if (!tokenData) {
       res.clearCookie('accessToken');
       res.clearCookie('refreshToken');
@@ -59,8 +69,8 @@ const authMiddleware = async (req, res, next) => {
 
     const { storedToken, decoded } = tokenData;
 
-    const user = await User.findById(decoded.userId).select('-password');
-    
+    const user = await User.findById(decoded.userId).select('_id tokenVersion');
+
     if (!user) {
       res.clearCookie('accessToken');
       res.clearCookie('refreshToken');
@@ -73,18 +83,18 @@ const authMiddleware = async (req, res, next) => {
       throw new AppError('Session invalidated. Please login again', 401);
     }
 
-    // update last used timestamp
+    // update refresh token usage
     storedToken.lastUsedAt = new Date();
     await storedToken.save();
 
-    // generate new access token
+    // issue new access token
     generateAccessToken(res, user._id, user.tokenVersion);
 
-    req.user = { 
-      _id: user._id, 
-      tokenVersion: user.tokenVersion 
+    req.user = {
+      _id: user._id,
+      tokenVersion: user.tokenVersion
     };
-    
+
     return next();
 
   } catch (error) {
