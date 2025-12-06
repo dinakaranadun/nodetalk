@@ -33,7 +33,7 @@ const authMiddleware = async (req, res, next) => {
         
       } catch (error) {
         if (error.name !== 'TokenExpiredError') {
-          throw error;
+          throw new AppError('Invalid access token', 401);
         }
       }
     }

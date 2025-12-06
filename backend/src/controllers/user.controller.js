@@ -1,10 +1,8 @@
 import asyncHandler from 'express-async-handler';
-import validator from 'validator';
 import AppError from '../utils/apperror.js';
 import User from '../models/User.js';
 import { successResponse } from '../utils/response.js';
 import cloudinary from '../config/cloudinary.js';
-import authRouter from '../routes/auth.route.js';
 
 /**
  * @route   GET /api/v1/user/me
@@ -28,6 +26,25 @@ const getUserProfile = asyncHandler(async (req, res) => {
  * @desc    Update user avatar
  * @access  Private
  */
+   const uploadToCloudinary = () => {
+        return new Promise((resolve, reject) => {
+            const stream = cloudinary.uploader.upload_stream(
+                {
+                    folder: "avatars",
+                    width: 300,
+                    crop: "scale",
+                    quality: "auto",
+                    fetch_format: "auto",
+                },
+                (error, result) => {
+                    if (error) return reject(new AppError("Upload failed", 500));
+                    resolve(result);
+                }
+            );
+
+            stream.end(req.file.buffer);
+        });
+    };
 
 const updateAvatar = asyncHandler(async (req, res) => {
     const userId = req.user._id;
@@ -37,13 +54,8 @@ const updateAvatar = asyncHandler(async (req, res) => {
     }
 
     // Upload to Cloudinary
-    const resultCloudinary = await cloudinary.uploader.upload(req.file.path, {
-        folder: "avatars",
-        width: 300,
-        crop: "scale",
-        quality: "auto",
-        fetch_format: "auto",
-    });
+    const resultCloudinary = await uploadToCloudinary()
+    
 
     // Update user profilePic
     const updatedUser = await User.findByIdAndUpdate(
