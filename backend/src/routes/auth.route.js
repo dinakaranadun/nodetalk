@@ -11,11 +11,6 @@ authRouter.get("/check-user", arcjetAuth,authMiddleware, (req, res) => {
         user: req.user
     });
 });
-authRouter.get("/checkrate", arcjetAuth,(req, res) => {
-    res.status(200).json({
-        success: true
-    })
-});
 authRouter.post('/signIn',arcjetAuth,signIn);
 authRouter.post('/signUp',arcjetAuth,signUp);
 
