@@ -89,14 +89,12 @@ const ajWrite = arcjet({
       mode: "LIVE",
       refillRate: 1,      
       interval: 10,
-      capacity: 5,        
-      characteristics: ["ip"],  
+      capacity: 5,         
     }),
     slidingWindow({
       mode: "LIVE",
       interval: 60 * 1000, 
-      max: 5,             
-      characteristics: ["ip"], 
+      max: 5,              
     }),
   ],
 });

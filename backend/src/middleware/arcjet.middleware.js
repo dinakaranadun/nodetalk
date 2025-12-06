@@ -85,6 +85,7 @@ const createArcjetMiddleware = (ajInstance, options = {}) => {
 export const arcjetRead = createArcjetMiddleware(ajRead, {
   requireAuth: true,
   getTokenCost: () => 1,
+  
 });
 
 export const arcjetWrite = createArcjetMiddleware(ajWrite, {
