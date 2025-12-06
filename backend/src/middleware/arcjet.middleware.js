@@ -1,14 +1,10 @@
 import { ajRead, ajWrite, ajExpensive, ajAuth } from "../config/arcjet.js";
+import { NODE_ENV } from "../config/env.js";
 import AppError from "../utils/apperror.js";
 
 // Helper to check for spoofed bots
-const isSpoofedBot = (result) => {
-  return (
-    result.reason?.isBot?.() &&
-    result.reason?.isSpoofed?.() &&
-    result.reason?.allowed === false
-  );
-};
+const isSpoofedBot = (result) =>
+ result.reason?.isBot?.() && result.reason?.isSpoofed?.();
 
 
 const createArcjetMiddleware = (ajInstance, options = {}) => {
@@ -38,7 +34,7 @@ const createArcjetMiddleware = (ajInstance, options = {}) => {
         requested: tokenCost 
       });
 
-      console.log("Arcjet decision:", {
+      NODE_ENV === 'development' && console.log("Arcjet decision:", {
         isDenied: decision.isDenied(),
         reason: decision.reason,
         tokenCost,
@@ -46,12 +42,12 @@ const createArcjetMiddleware = (ajInstance, options = {}) => {
 
       // Handle denied requests
       if (decision.isDenied()) {
-        if (decision.reason.isRateLimit()) {
-          const resetTime = decision.reason.resetTime;
-          const retryAfter = resetTime 
-            ? Math.ceil((resetTime.getTime() - Date.now()) / 1000) 
-            : 60;
-          
+         if (decision.reason.isRateLimit()) {
+          const retryAfter =
+            typeof decision.reason.reset === "number" && decision.reason.reset > Date.now()
+              ? Math.ceil((decision.reason.reset - Date.now()) / 1000)
+              : 60;
+
           res.set("Retry-After", retryAfter);
           return next(
             new AppError(
