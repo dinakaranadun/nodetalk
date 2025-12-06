@@ -1,7 +1,7 @@
 import express from 'express';
 import { signIn, signUp } from '../controllers/auth.controller.js';
 import authMiddleware from '../middleware/auth.middleware.js';
-import { arcjetAuth } from '../middleware/arcject.middlware.js';
+import { arcjetAuth } from '../middleware/arcjet.middleware.js';
 
 const authRouter = express.Router();
 
