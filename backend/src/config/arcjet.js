@@ -15,13 +15,13 @@ import { ARCJET_KEY } from "./env.js";
       refillRate: 10,     
       interval: 1,
       capacity: 100,     
-      attributes: ["userId"],
+      characteristics: ["userId"],
     }),
     slidingWindow({
       mode: "LIVE",
       interval: 60 * 1000, 
       max: 100,          
-      attributes: ["userId"],
+      characteristics: ["userId"],
     }),
   ],
 });
@@ -40,13 +40,13 @@ const ajWrite = arcjet({
       refillRate: 2,     
       interval: 1,
       capacity: 20,      
-      attributes: ["userId"],
+      characteristics: ["userId"],
     }),
     slidingWindow({
       mode: "LIVE",
       interval: 10 * 1000, 
       max: 5,            
-      attributes: ["userId"],
+      characteristics: ["userId"],
     }),
   ],
 });
@@ -65,13 +65,13 @@ const ajWrite = arcjet({
       refillRate: 1,      
       interval: 2,
       capacity: 10,       
-      attributes: ["userId"],
+      characteristics: ["userId"],
     }),
     slidingWindow({
       mode: "LIVE",
       interval: 60 * 1000, 
       max: 20,            
-      attributes: ["userId"],
+      characteristics: ["userId"],
     }),
   ],
 });
@@ -90,15 +90,15 @@ const ajWrite = arcjet({
       refillRate: 1,      
       interval: 10,
       capacity: 5,        
-      attributes: ["ip"],  
+      characteristics: ["ip"],  
     }),
     slidingWindow({
       mode: "LIVE",
       interval: 60 * 1000, 
       max: 5,             
-      attributes: ["ip"], 
+      characteristics: ["ip"], 
     }),
   ],
 });
 
-export{ajAuth,ajExpensive,ajRead,ajWrite}
+export{ ajAuth, ajExpensive, ajRead, ajWrite}

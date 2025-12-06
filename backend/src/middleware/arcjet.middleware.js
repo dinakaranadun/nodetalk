@@ -98,10 +98,7 @@ export const arcjetWrite = createArcjetMiddleware(ajWrite, {
 
 export const arcjetExpensive = createArcjetMiddleware(ajExpensive, {
   requireAuth: true,
-  getTokenCost: (req) => {
-    if (req.file) return 3;;
-    return 1;
-  },
+  getTokenCost: () => 3,
 });
 
 export const arcjetAuth = createArcjetMiddleware(ajAuth, {
