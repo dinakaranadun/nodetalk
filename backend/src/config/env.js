@@ -16,7 +16,9 @@ const requiredEnvVars = [
   'EMAIL_FROM_NAME',
   'CLOUDINARY_CLOUD_NAME',
   'CLOUDINARY_API_KEY',
-  'CLOUDINARY_API_SECRET'
+  'CLOUDINARY_API_SECRET',
+  'ARCJET_KEY',
+  'ARCJET_ENV'
 ];
 
 // Check for missing environment variables
@@ -45,5 +47,7 @@ export const {
   EMAIL_FROM_NAME,
   CLOUDINARY_CLOUD_NAME,
   CLOUDINARY_API_KEY,
-  CLOUDINARY_API_SECRET
+  CLOUDINARY_API_SECRET,
+  ARCJET_KEY,
+  ARCJET_ENV
 } = process.env;
