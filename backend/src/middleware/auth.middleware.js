@@ -5,79 +5,105 @@ import { verifyRefreshToken, generateAccessToken } from "../utils/token.js";
 import jwt from 'jsonwebtoken';
 
 const authMiddleware = async (req, res, next) => {
-    let { accessToken, refreshToken } = req.cookies;
+  const { accessToken, refreshToken } = req.cookies;
 
-    try {
-        if (!accessToken) {
-            throw new AppError('Access token not found', 401);
-        }
+  try {
+    let shouldTryRefresh = false;
 
-        try {
-            const decoded = jwt.verify(accessToken, JWT_SECRET);
-            
-            const user = await User.findById(decoded.userId).select('-password');
-
-            if (!user) {
-                throw new AppError('User Not Found', 401);
-            }
-
-            if (decoded.tokenVersion !== user.tokenVersion) {
-                throw new AppError('Token version mismatch', 401);
-            }
-
-            req.user = user;
-            return next();
-
-        } catch (error) {
-            // Access token expired or invalid
-            if (error.name !== 'TokenExpiredError') {
-                throw new AppError('Invalid access token', 401);
-            }
-
-            // Try to refresh using refresh token
-            if (!refreshToken) {
-                res.clearCookie('accessToken');
-                res.clearCookie('refreshToken');
-                throw new AppError('Session expired. Please login again', 401);
-            }
-
-            const tokenData = await verifyRefreshToken(refreshToken);
-
-            if (!tokenData) {
-                res.clearCookie('accessToken');
-                res.clearCookie('refreshToken');
-                throw new AppError('Session expired. Please login again', 401);
-            }
-
-            const { storedToken, decoded } = tokenData;
-
-            // Get user
-            const user = await User.findById(decoded.userId).select('-password');
-
-            if (!user) {
-                res.clearCookie('accessToken');
-                res.clearCookie('refreshToken');
-                throw new AppError('User not found. Please login again', 401);
-            }
-
-            if (decoded.tokenVersion !== user.tokenVersion) {
-                res.clearCookie('accessToken');
-                res.clearCookie('refreshToken');
-                throw new AppError('Session invalid. Please login again', 401);
-            }
-
-            storedToken.lastUsedAt = new Date();
-            await storedToken.save();
-
-            generateAccessToken(res, user._id, user.tokenVersion);
-
-            req.user = user;
-            return next();
-        }
-
-    } catch (error) {
-        next(error);
+    if (!accessToken && !refreshToken) {
+      throw new AppError('Authentication required', 401);
     }
+
+    if (accessToken) {
+      try {
+        const decoded = jwt.verify(accessToken, JWT_SECRET);
+
+        const user = await User.findById(decoded.userId).select('_id tokenVersion');
+
+        if (!user) {
+          throw new AppError('User not found', 401);
+        }
+
+        if (decoded.tokenVersion !== user.tokenVersion) {
+          throw new AppError('Token invalidated', 401);
+        }
+
+        req.user = {
+          _id: user._id,
+          tokenVersion: user.tokenVersion
+        };
+
+        return next();
+
+      } catch (error) {
+        if (error instanceof AppError) {
+          throw error;
+        }
+
+        // access token expired → try refresh next
+        if (error.name === 'TokenExpiredError') {
+          shouldTryRefresh = true;
+        } else {
+          throw new AppError("Invalid access token", 401);
+        }
+      }
+    }
+
+
+    // no access token or expired
+  
+    if (!refreshToken) {
+      const message = shouldTryRefresh
+        ? "Access token expired"
+        : "Session expired. Please login again";
+      throw new AppError(message, 401);
+    }
+
+    const tokenData = await verifyRefreshToken(refreshToken);
+
+    if (!tokenData) {
+      res.clearCookie('accessToken');
+      res.clearCookie('refreshToken');
+      throw new AppError('Invalid session. Please login again', 401);
+    }
+
+    const { storedToken, decoded } = tokenData;
+
+    const user = await User.findById(decoded.userId).select('_id tokenVersion');
+
+    if (!user) {
+      res.clearCookie('accessToken');
+      res.clearCookie('refreshToken');
+      throw new AppError('User not found. Please login again', 401);
+    }
+
+    if (decoded.tokenVersion !== user.tokenVersion) {
+      res.clearCookie('accessToken');
+      res.clearCookie('refreshToken');
+      throw new AppError('Session invalidated. Please login again', 401);
+    }
+
+    // update refresh token usage
+    storedToken.lastUsedAt = new Date();
+    await storedToken.save();
+
+    // issue new access token
+    generateAccessToken(res, user._id, user.tokenVersion);
+
+    req.user = {
+      _id: user._id,
+      tokenVersion: user.tokenVersion
+    };
+
+    return next();
+
+  } catch (error) {
+    if (error.statusCode === 401) {
+      res.clearCookie('accessToken');
+      res.clearCookie('refreshToken');
+    }
+    next(error);
+  }
 };
 
-export { authMiddleware };
+export default authMiddleware;

@@ -1,4 +1,3 @@
-// controllers/auth.controller.js
 import asyncHandler from 'express-async-handler';
 import validator from 'validator';
 import AppError from '../utils/apperror.js';
