@@ -8,6 +8,6 @@ const messageRouter = express.Router();
 messageRouter.get('/contacts',authMiddleware,getContacts);
 messageRouter.get('/myChannels',authMiddleware,getChannelList);
 messageRouter.get('/:channelId/channel',authMiddleware,getDMChannel);
-messageRouter.post('/contacts',authMiddleware,sendMessage);
+messageRouter.post('/:receiverId/send',authMiddleware,sendMessage);
 
 export default messageRouter;

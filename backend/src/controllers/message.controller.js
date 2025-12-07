@@ -17,9 +17,9 @@ const getContacts = asyncHandler(async(req,res)=>{
     const userId = req.user._id;
     const users = await User.find({_id:{$ne:userId}}).select('-password');
 
-    if(!users){
-        AppError('Failed to find users',400);
-    }
+     if(users.length === 0){
+      throw new AppError('No users found',404);
+     }
 
     successResponse(res,200,'All users fetched succefully',users);
 })
@@ -67,6 +67,17 @@ const getChannelList = asyncHandler(async (req, res) => {
 
 const getDMChannel = asyncHandler(async(req,res)=>{
     const {channelId} = req.params;
+     const userId = req.user._id;
+
+    // Verify user is a member of the channel
+    const channel = await DMChannel.findOne({
+      _id: channelId,
+      members: userId
+    });
+
+    if (!channel) {
+      throw new AppError('Channel not found or access denied', 403);
+    }
 
     const limit = 20;
     const page = parseInt(req.query.page) || 1;
@@ -86,7 +97,7 @@ const getDMChannel = asyncHandler(async(req,res)=>{
 })
 
 /**
- * @route   POST /api/v1/messages/:receiverId
+ * @route   POST /api/v1/messages/:receiverId/send
  * @desc    send a message to another user
  * @access  Private
  */
