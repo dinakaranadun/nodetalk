@@ -26,49 +26,46 @@ const getUserProfile = asyncHandler(async (req, res) => {
  * @desc    Update user avatar
  * @access  Private
  */
-   const uploadToCloudinary = () => {
-        return new Promise((resolve, reject) => {
-            const stream = cloudinary.uploader.upload_stream(
-                {
-                    folder: "avatars",
-                    width: 300,
-                    crop: "scale",
-                    quality: "auto",
-                    fetch_format: "auto",
-                },
-                (error, result) => {
-                    if (error) return reject(new AppError("Upload failed", 500));
-                    resolve(result);
-                }
-            );
 
-            stream.end(req.file.buffer);
-        });
-    };
+const uploadToCloudinary = (fileBuffer) => {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      {
+        folder: "avatars",
+        width: 300,
+        crop: "scale",
+        quality: "auto",
+        fetch_format: "auto",
+      },
+      (error, result) => {
+        if (error) return reject(new AppError("Upload failed", 500));
+        resolve(result);
+      }
+    );
+    stream.end(fileBuffer);
+  });
+};
 
 const updateAvatar = asyncHandler(async (req, res) => {
-    const userId = req.user._id;
+  const userId = req.user._id;
+  
+  if (!req.file) {
+    throw new AppError("No image uploaded", 400);
+  }
 
-    if (!req.file) {
-        throw new AppError("No image uploaded", 400);
-    }
+  const resultCloudinary = await uploadToCloudinary(req.file.buffer);
 
-    // Upload to Cloudinary
-    const resultCloudinary = await uploadToCloudinary()
-    
+  const updatedUser = await User.findByIdAndUpdate(
+    userId,
+    { profilePic: resultCloudinary.secure_url },
+    { new: true }
+  ).select("-password");
 
-    // Update user profilePic
-    const updatedUser = await User.findByIdAndUpdate(
-        userId,
-        { profilePic: resultCloudinary.secure_url },
-        { new: true }
-    ).select("-password");
+  if (!updatedUser) {
+    throw new AppError("Avatar update failed", 400);
+  }
 
-    if (!updatedUser) {
-        throw new AppError("Avatar update failed", 400);
-    }
-
-    successResponse(res, 200, "Avatar updated successfully", updatedUser);
+  successResponse(res, 200, "Avatar updated successfully", updatedUser);
 });
 
 export{getUserProfile,updateAvatar}
