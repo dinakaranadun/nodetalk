@@ -5,6 +5,7 @@ import authRouter from './src/routes/auth.route.js';
 import { errorHandler, notFound } from './src/middleware/error.middleware.js';
 import cookieParser from 'cookie-parser';
 import userRouter from './src/routes/user.route.js';
+import messageRouter from './src/routes/message.route.js';
 
 
 
@@ -24,7 +25,8 @@ app.get('/health', (req, res) => {
 
 
 app.use('/api/v1/auth',authRouter);
-app.use('/api/v1/user',userRouter)
+app.use('/api/v1/user',userRouter);
+app.use('/api/v1/messages',messageRouter);
 
 app.get('/', (req, res) => {
   res.status(200).json({
