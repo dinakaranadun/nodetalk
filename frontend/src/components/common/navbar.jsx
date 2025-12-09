@@ -13,7 +13,7 @@ const Navbar = () => {
             <div className="bg-blue-600 p-1.5 rounded-lg">
               <MessageCircle className="w-6 h-6 text-white" />
             </div>
-            <span className="text-xl font-bold bg-linear-to-r from-blue-600 to-purple-500 bg-clip-text text-transparent">
+            <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-500 bg-clip-text text-transparent">
               NodeTalk
             </span>
           </div>
@@ -25,8 +25,8 @@ const Navbar = () => {
             <div className="flex items-center gap-4 ml-4">
               <button className="text-gray-900 font-medium hover:text-blue-600 transition hover:cursor-pointer">Sign In</button>
               <button className="relative px-5 py-2 rounded-full font-medium text-white overflow-hidden group hover:cursor-pointer">
-                <span className="absolute inset-0 bg-linear-to-r from-blue-600 to-purple-500 transition-opacity duration-500 ease-in-out"></span>
-                <span className="absolute inset-0 bg-linear-to-r from-purple-500 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500 ease-in-out"></span>
+                <span className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-500 transition-opacity duration-500 ease-in-out"></span>
+                <span className="absolute inset-0 bg-gradient-to-r from-purple-500 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500 ease-in-out"></span>
                 <span className="relative">Get Started</span>
               </button>
             </div>
@@ -48,8 +48,8 @@ const Navbar = () => {
             <a href="#features" className="text-gray-600">Features</a>
             <button className="text-left text-gray-900 font-medium">Sign In</button>
             <button className="relative px-5 py-2 rounded-full font-medium text-white overflow-hidden group">
-                <span className="absolute inset-0 bg-linear-to-r from-blue-600 to-purple-500 transition-opacity duration-500 ease-in-out"></span>
-                <span className="absolute inset-0 bg-linear-to-r from-purple-500 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500 ease-in-out"></span>
+                <span className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-500 transition-opacity duration-500 ease-in-out"></span>
+                <span className="absolute inset-0 bg-gradient-to-r from-purple-500 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500 ease-in-out"></span>
                 <span className="relative">Get Started</span>
               </button>
           </div>

@@ -9,7 +9,7 @@ const Hero = () => {
           {/* Left: Text */}
           <div className="text-center lg:text-left">
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 tracking-tight leading-[1.15]">
-              Connect Instantly with <span className=" bg-linear-to-r from-blue-600 to-purple-500 text-transparent bg-clip-text">NodeTalk</span>
+              Connect Instantly with <span className=" bg-gradient-to-r from-blue-600 to-purple-500 text-transparent bg-clip-text">NodeTalk</span>
             </h1>
             <p className="mt-6 text-lg text-gray-500 max-w-2xl mx-auto lg:mx-0">
               Experience seamless, real-time messaging built for speed and privacy.
@@ -19,8 +19,8 @@ const Hero = () => {
             {/* Buttons */}
             <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
               <button className="btn btn-primary relative overflow-hidden group rounded-full px-8 py-6 text-white border-0 ">
-                <span className="absolute inset-0 bg-linear-to-r from-blue-600 to-purple-500 transition-opacity duration-500 ease-in-out"></span>
-                <span className="absolute inset-0 bg-linear-to-r from-purple-500 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500 ease-in-out"></span>
+                <span className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-500 transition-opacity duration-500 ease-in-out"></span>
+                <span className="absolute inset-0 bg-gradient-to-r from-purple-500 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500 ease-in-out"></span>
                 <span className="relative flex items-center gap-2">
                     Start Chatting Free 
                     <ArrowRight className="w-5 h-5 " />
