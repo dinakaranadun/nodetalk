@@ -1,8 +1,21 @@
 import { useForm } from 'react-hook-form';
 import Card from '../../components/auth/card/card';
-import { KeyRound, Mail } from "lucide-react";
+import {User2,KeyRound, Mail } from "lucide-react";
 
-const signInFormFields = [
+const signUpFormFields = [
+ {
+    name: "userName",
+    type: "text",
+    placeholder: "Enter your UserName",
+    icon: User2,
+    validation: {
+      required: "Username is required",
+       minLength: {
+        value: 1,
+        message: "Username must be at least 2 characters"
+      }
+    }
+  },
   {
     name: "email",
     type: "email",
@@ -31,7 +44,7 @@ const signInFormFields = [
   }
 ];
 
-const SignIn = () => {
+const SignUp = () => {
   const {
     register,
     handleSubmit,
@@ -46,35 +59,35 @@ const SignIn = () => {
   });
 
   const onSubmit = async (data) => {
-    console.log("Sign in with:", data);
+    console.log("Sign Up with:", data);
     alert(`Signed in successfully!\nEmail: ${data.email}\nRemember Me: ${data.rememberMe}`);
   };
 
-  const handleGoogleSignIn = () => {
+  const handleGoogleSignUp = () => {
     console.log("Google sign in clicked");
   };
 
   return (
     <div >
       <Card
-        title="Sign In"
-        subTitle="Enter your credentials to sign in"
-        formData={signInFormFields}
+        title="Sign Up"
+        subTitle="Create your new account"
+        formData={signUpFormFields}
         onSubmit={onSubmit}
-        handleGoogle={handleGoogleSignIn}
+        handleGoogle={handleGoogleSignUp}
         register={register}
         handleSubmit={handleSubmit}
         errors={errors}
         isSubmitting={isSubmitting}
-        showRemember={true}
-        showForgot={true}
+        showRemember={false}
+        showForgot={false}
         showBottomLink={true}
-        bottomLinkText="Don't have an account?"
-        bottomLinkHref="signup"
-        submitText="Sign In"
-/>
+        bottomLinkText="Already have an account?"
+        bottomLinkHref="signin"
+        submitText="Create Account"
+        />
     </div>
   )
 }
 
-export default SignIn;
+export default SignUp;
