@@ -1,18 +1,24 @@
 import { useForm } from 'react-hook-form';
 import Card from '../../components/auth/card/card';
 import {User2,KeyRound, Mail } from "lucide-react";
+import { useSignUpMutation } from '../../store/auth/authSliceApi';
+import toast from 'react-hot-toast';
 
 const signUpFormFields = [
- {
+  {
     name: "userName",
     type: "text",
     placeholder: "Enter your UserName",
     icon: User2,
     validation: {
       required: "Username is required",
-       minLength: {
-        value: 1,
+      minLength: {
+        value: 2,
         message: "Username must be at least 2 characters"
+      },
+      pattern: {
+        value: /^[A-Za-z0-9._-]+$/,
+        message: "Username cannot contain spaces"
       }
     }
   },
@@ -35,16 +41,22 @@ const signUpFormFields = [
     placeholder: "Enter your password",
     icon: KeyRound,
     validation: {
-      required: "Password is required",
-      minLength: {
-        value: 8,
-        message: "Password must be at least 8 characters"
-      }
+    required: "Password is required",
+    minLength: {
+      value: 8,
+      message: "Password must be at least 8 characters"
+    },
+    pattern: {
+      value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+      message: "Must include uppercase, lowercase, number & special character"
     }
+}
   }
 ];
 
 const SignUp = () => {
+  const [signUp] = useSignUpMutation();
+
   const {
     register,
     handleSubmit,
@@ -52,23 +64,30 @@ const SignUp = () => {
   } = useForm({
     mode: "onBlur", 
     defaultValues: {
+      userName: "",
       email: "",
       password: "",
-      rememberMe: false
     }
   });
 
   const onSubmit = async (data) => {
-    console.log("Sign Up with:", data);
-    alert(`Signed in successfully!\nEmail: ${data.email}\nRemember Me: ${data.rememberMe}`);
+    try {
+      const result = await signUp(data).unwrap();
+      if (result.success) {
+        toast.success('Signed up Successfully');
+      }
+    } catch (err) {
+      toast.error(err?.data?.message || "Network error");
+    }
   };
 
   const handleGoogleSignUp = () => {
-    console.log("Google sign in clicked");
+    
+    
   };
 
   return (
-    <div >
+    <>
       <Card
         title="Sign Up"
         subTitle="Create your new account"
@@ -86,7 +105,7 @@ const SignUp = () => {
         bottomLinkHref="signin"
         submitText="Create Account"
         />
-    </div>
+    </>
   )
 }
 

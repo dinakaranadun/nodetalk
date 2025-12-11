@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { MessageCircle, Shield, Zap, ArrowRight, Menu, X } from 'lucide-react';
+import { MessageCircle, Menu, X } from 'lucide-react';
+import { Link } from "react-router";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -23,12 +24,12 @@ const Navbar = () => {
             <a href="#features" className="text-gray-600 hover:text-blue-600 font-medium transition hover:cursor-pointer">Features</a>
             <a href="#" className="text-gray-600 hover:text-blue-600 font-medium transition hover:cursor-pointer">About</a>
             <div className="flex items-center gap-4 ml-4">
-              <button className="text-gray-900 font-medium hover:text-blue-600 transition hover:cursor-pointer">Sign In</button>
-              <button className="relative px-5 py-2 rounded-full font-medium text-white overflow-hidden group hover:cursor-pointer">
+              <Link to='/auth/signIn' className="text-gray-900 font-medium hover:text-blue-600 transition hover:cursor-pointer">Sign In</Link>
+              <Link to='/auth/signUp' className="relative px-5 py-2 rounded-full font-medium text-white overflow-hidden group hover:cursor-pointer">
                 <span className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-500 transition-opacity duration-500 ease-in-out"></span>
                 <span className="absolute inset-0 bg-gradient-to-r from-purple-500 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500 ease-in-out"></span>
                 <span className="relative">Get Started</span>
-              </button>
+              </Link>
             </div>
           </div>
 

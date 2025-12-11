@@ -1,5 +1,5 @@
 import express from 'express';
-import { signIn, signUp } from '../controllers/auth.controller.js';
+import { signIn, signOut, signUp } from '../controllers/auth.controller.js';
 import authMiddleware from '../middleware/auth.middleware.js';
 import { arcjetRead,arcjetAuth } from '../middleware/arcjet.middleware.js';
 
@@ -13,6 +13,8 @@ authRouter.get("/check-user", authMiddleware,arcjetRead, (req, res) => {
 });
 authRouter.post('/signIn',arcjetAuth,signIn);
 authRouter.post('/signUp',arcjetAuth,signUp);
+authRouter.post('/signOut',arcjetAuth,signOut);
+
 
 export default authRouter;
 

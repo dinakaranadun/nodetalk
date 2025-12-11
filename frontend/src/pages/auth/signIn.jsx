@@ -1,6 +1,8 @@
 import { useForm } from 'react-hook-form';
 import Card from '../../components/auth/card/card';
 import { KeyRound, Mail } from "lucide-react";
+import { useSignInMutation } from '../../store/auth/authSliceApi';
+import toast from 'react-hot-toast';
 
 const signInFormFields = [
   {
@@ -32,6 +34,8 @@ const signInFormFields = [
 ];
 
 const SignIn = () => {
+  const [signIn] = useSignInMutation();
+
   const {
     register,
     handleSubmit,
@@ -46,8 +50,14 @@ const SignIn = () => {
   });
 
   const onSubmit = async (data) => {
-    console.log("Sign in with:", data);
-    alert(`Signed in successfully!\nEmail: ${data.email}\nRemember Me: ${data.rememberMe}`);
+    try {
+      const result = await signIn(data).unwrap();
+      if (result.success) {
+        toast.success('Signed in Successfully');
+      }
+    } catch (err) {
+      toast.error(err?.data?.message || "Network error");
+    }
   };
 
   const handleGoogleSignIn = () => {
@@ -55,7 +65,7 @@ const SignIn = () => {
   };
 
   return (
-    <div >
+    <>
       <Card
         title="Sign In"
         subTitle="Enter your credentials to sign in"
@@ -73,7 +83,7 @@ const SignIn = () => {
         bottomLinkHref="signup"
         submitText="Sign In"
 />
-    </div>
+    </>
   )
 }
 

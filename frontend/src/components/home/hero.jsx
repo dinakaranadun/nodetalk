@@ -1,4 +1,5 @@
 import { ArrowRight, MessageCircle } from "lucide-react";
+import {Link} from 'react-router'
 
 const Hero = () => {
   return (
@@ -18,17 +19,17 @@ const Hero = () => {
 
             {/* Buttons */}
             <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <button className="btn btn-primary relative overflow-hidden group rounded-full px-8 py-6 text-white border-0 ">
+              <Link to='/auth/signUp' className="btn btn-primary relative overflow-hidden group rounded-full px-8 py-6 text-white border-0 ">
                 <span className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-500 transition-opacity duration-500 ease-in-out"></span>
                 <span className="absolute inset-0 bg-gradient-to-r from-purple-500 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500 ease-in-out"></span>
                 <span className="relative flex items-center gap-2">
                     Start Chatting Free 
                     <ArrowRight className="w-5 h-5 " />
                 </span>
-              </button>
+              </Link>
 
               <button className="btn btn-outline rounded-full px-8 py-6">
-                View Github
+                View GitHub
               </button>
             </div>
           </div>

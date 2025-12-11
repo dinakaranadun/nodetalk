@@ -46,9 +46,9 @@ const signIn = asyncHandler(async(req, res) => {
  * @access  Public
  */
 const signUp = asyncHandler(async(req, res) => {
-    const { fullName, email, password, confirmPassword } = req.body;
+    const { userName, email, password, confirmPassword } = req.body;
 
-    if (!fullName || !email || !password || !confirmPassword) {
+    if (!userName || !email || !password || !confirmPassword) {
         throw new AppError("All fields are required", 400);
     }
 
@@ -64,20 +64,30 @@ const signUp = asyncHandler(async(req, res) => {
         throw new AppError("Password must include uppercase, lowercase, number, symbol and be 8+ chars", 400);
     }
 
-    const userExists = await User.findOne({ email });
+    const userExists = await User.findOne({
+            $or: [
+                { userName: userName },
+                { email: email }
+            ]
+            });
 
     if (userExists) {
-        throw new AppError("Email already registered", 400);
+        if (userExists.userName === userName) {
+            return res.status(400).json({ success: false, message: "Username already taken" });
+        }
+        if (userExists.email === email) {
+            return res.status(400).json({ success: false, message: "Email already registered" });
+        }
     }
 
-    const user = await User.create({ fullName, email, password });
+    const user = await User.create({ userName, email, password });
 
     generateAccessToken(res, user._id, user.tokenVersion);
     await generateRefreshToken(res, user._id, user.tokenVersion, req);
 
-    successResponse(res, 201, "Registration successful", {
+    successResponse(res, 201, "Registration successfull", {
         _id: user._id,
-        fullName: user.fullName,
+        userName: user.userName,
         email: user.email,
     });
 
