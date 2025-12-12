@@ -30,6 +30,7 @@ const authMiddleware = async (req, res, next) => {
 
         req.user = {
           _id: user._id,
+          userName:user.userName,
           tokenVersion: user.tokenVersion
         };
 

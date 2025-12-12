@@ -1,12 +1,29 @@
 import React from 'react'
 import { Route, Routes } from 'react-router'
-import toast, { Toaster } from 'react-hot-toast';
+import  { Toaster } from 'react-hot-toast';
 import Home from './pages/home'
 import AuthLayout from './components/auth/layout'
 import SignIn from './pages/auth/signIn'
 import SignUp from './pages/auth/signUp'
+import { useDispatch } from 'react-redux';
+import { useCheckUserQuery } from './store/auth/authSliceApi';
+import { useEffect } from 'react';
+import { clearCredentials, setCredentials } from './store/auth/authSlice';
+import ProtectedRoutes, { AuthRoutes } from './utils/protectedRoutes';
+import Index from './pages/chat';
 
 const App = () => {
+  const dispatch = useDispatch();
+  const { data, isLoading, isError, isSuccess } = useCheckUserQuery();
+
+   useEffect(() => {
+    if (isSuccess && data?.user) {
+      dispatch(setCredentials(data.user));
+    } else if (!isLoading && (isError || !data?.user)) {
+      dispatch(clearCredentials());
+    }
+  }, [data, isLoading, isError, isSuccess, dispatch]);
+
   return (
     <>
       <div>
@@ -14,9 +31,18 @@ const App = () => {
       </div>
       <Routes>
         <Route path='/' element={<Home/>}/>
-        <Route path='/auth' element={<AuthLayout/>}>
-          <Route path='signIn' element={<SignIn/>}/>
-          <Route path='signUp' element={<SignUp/>}/>
+
+        {/* Auth routes - logged in users will be redirected away */}
+        <Route element={<AuthRoutes />}>
+          <Route path='/auth' element={<AuthLayout/>}>
+            <Route path='signIn' element={<SignIn/>}/>
+            <Route path='signUp' element={<SignUp/>}/>
+          </Route>
+        </Route>
+        
+        {/* Protected routes - only authenticated users can access */}
+        <Route element={<ProtectedRoutes/>}>
+          <Route path='/home' element={<Index/>}/>
         </Route>
       </Routes>
     </>
