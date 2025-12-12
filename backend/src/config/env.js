@@ -3,6 +3,7 @@ import { config } from "dotenv";
 config({ path: `.env.${process.env.NODE_ENV || 'development'}.local` });
 
 const requiredEnvVars = [
+  'FRONTEND_URL',
   'PORT',
   'NODE_ENV',
   'MONGODB_URI',
@@ -34,6 +35,7 @@ if (missingEnvVars.length > 0) {
 }
 
 export const {
+  FRONTEND_URL,
   PORT,
   NODE_ENV,
   MONGODB_URI,

@@ -25,7 +25,6 @@ const generateAccessToken = (res, userId, tokenVersion) => {
     httpOnly: true,
     secure: NODE_ENV !== 'development',
     sameSite: 'strict',
-    maxAge: ms(JWT_EXPIRES_IN),
   });
 
   return token;
