@@ -44,15 +44,15 @@ const Navbar = () => {
 
       {/* Mobile Menu Dropdown */}
       {isOpen && (
-        <div className="md:hidden bg-white border-t border-gray-100 p-4 absolute w-full">
+        <div className="md:hidden bg-gradient-to-b from-white to-blue-200/10 border border-purple-600 rounded-3xl p-4 absolute w-full min-h-screen">
           <div className="flex flex-col space-y-4">
-            <a href="#features" className="text-gray-600">Features</a>
-            <button className="text-left text-gray-900 font-medium">Sign In</button>
-            <button className="relative px-5 py-2 rounded-full font-medium text-white overflow-hidden group">
+            <a href="#features" className="text-gray-900 font-medium">Features</a>
+            <Link to='/auth/signIn' className="text-left text-gray-900 font-medium">Sign In</Link>
+            <Link to='/auth/signUp' className="relative px-5 py-2 rounded-full text-center font-medium text-white overflow-hidden group ">
                 <span className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-500 transition-opacity duration-500 ease-in-out"></span>
                 <span className="absolute inset-0 bg-gradient-to-r from-purple-500 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500 ease-in-out"></span>
                 <span className="relative">Get Started</span>
-              </button>
+            </Link>
           </div>
         </div>
       )}

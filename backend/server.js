@@ -5,7 +5,7 @@ import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import mongoose from 'mongoose';
-import { NODE_ENV, PORT } from './src/config/env.js';
+import { FRONTEND_URL, NODE_ENV, PORT } from './src/config/env.js';
 import connectDatabase from './src/config/database.js';
 import authRouter from './src/routes/auth.route.js';
 import userRouter from './src/routes/user.route.js';
@@ -16,7 +16,7 @@ import requestTimeout from './src/middleware/requestTimeOut.middleware.js';
 // ============================================
 // Environment Variables Validation
 // ============================================
-const requiredEnvVars = ['PORT', 'NODE_ENV', 'MONGODB_URI', 'JWT_SECRET'];
+const requiredEnvVars = ['PORT', 'NODE_ENV', 'MONGODB_URI', 'JWT_SECRET','FRONTEND_URL'];
 const missingEnvVars = requiredEnvVars.filter(varName => !process.env[varName]);
 
 if (missingEnvVars.length > 0) {
@@ -29,8 +29,8 @@ if (missingEnvVars.length > 0) {
 // ============================================
 const isDevelopment = NODE_ENV === 'development';
 const allowedOrigins = isDevelopment 
-  ? ['http://localhost:5173', 'http://localhost:3000']
-  : [process.env.FRONTEND_URL].filter(Boolean);
+  ? ['http://localhost:5173']
+  : [FRONTEND_URL].filter(Boolean);
 
 const app = express();
 

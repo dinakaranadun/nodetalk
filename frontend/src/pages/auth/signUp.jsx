@@ -42,15 +42,26 @@ const signUpFormFields = [
     icon: KeyRound,
     validation: {
     required: "Password is required",
-    minLength: {
-      value: 8,
-      message: "Password must be at least 8 characters"
-    },
-    pattern: {
-      value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-      message: "Must include uppercase, lowercase, number & special character"
+      minLength: {
+        value: 8,
+        message: "Password must be at least 8 characters"
+      },
+      pattern: {
+        value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+        message: "Must include uppercase, lowercase, number & special character"
+      }
     }
-}
+  },
+   {
+    name: "confirmPassword",
+    type: "password",
+    placeholder: "Confirm your password",
+    icon: KeyRound,
+    validation: {
+      required: "Please confirm your password",
+      validate: (value, formValues) => 
+        value === formValues.password || "Passwords do not match"
+    }
   }
 ];
 
@@ -67,6 +78,7 @@ const SignUp = () => {
       userName: "",
       email: "",
       password: "",
+      confirmPassword: "",
     }
   });
 

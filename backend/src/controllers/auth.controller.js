@@ -85,7 +85,7 @@ const signUp = asyncHandler(async(req, res) => {
     generateAccessToken(res, user._id, user.tokenVersion);
     await generateRefreshToken(res, user._id, user.tokenVersion, req);
 
-    successResponse(res, 201, "Registration successfull", {
+    successResponse(res, 201, "Registration successful", {
         _id: user._id,
         userName: user.userName,
         email: user.email,
