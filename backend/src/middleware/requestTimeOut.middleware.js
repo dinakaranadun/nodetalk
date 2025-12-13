@@ -1,4 +1,4 @@
-import AppError from "../utils/apperror";
+import AppError from "../utils/apperror.js";
 
 const requestTimeout = (req, res, next) => {
   req.setTimeout(30000, () => {

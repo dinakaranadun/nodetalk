@@ -8,6 +8,7 @@ const authSliceApi = apiSlice.injectEndpoints({
             query:() => ({
                 url:`${AUTH_URL}/check-user`,
                 method:'GET',
+                credentials: 'include', 
             }),
         }),
         signIn:builder.mutation({
