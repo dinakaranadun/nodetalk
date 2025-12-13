@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Index = () => {
+const Chats = () => {
   return (
     <div>
       <h1>chat page</h1>
@@ -8,4 +8,4 @@ const Index = () => {
   )
 }
 
-export default Index;
+export default Chats;

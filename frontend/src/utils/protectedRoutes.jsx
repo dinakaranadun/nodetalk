@@ -37,7 +37,7 @@ const AuthRoutes = () => {
   }
 
   if (isAuthenticated && user) {
-    return <Navigate to="/home" replace />;
+    return <Navigate to="/chats" replace />;
   }
 
   return <Outlet />;

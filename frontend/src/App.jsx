@@ -10,7 +10,7 @@ import { useCheckUserQuery } from './store/auth/authSliceApi';
 import { useEffect } from 'react';
 import { clearCredentials, setCredentials } from './store/auth/authSlice';
 import ProtectedRoutes, { AuthRoutes } from './utils/protectedRoutes';
-import Index from './pages/chat';
+import Chats from './pages/chat/chats';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -42,7 +42,7 @@ const App = () => {
         
         {/* Protected routes - only authenticated users can access */}
         <Route element={<ProtectedRoutes/>}>
-          <Route path='/home' element={<Index/>}/>
+          <Route path='/chats' element={<Chats/>}/>
         </Route>
       </Routes>
     </>
