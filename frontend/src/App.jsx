@@ -11,6 +11,7 @@ import { useEffect } from 'react';
 import { clearCredentials, setCredentials } from './store/auth/authSlice';
 import ProtectedRoutes, { AuthRoutes } from './utils/protectedRoutes';
 import Chats from './pages/chat/chats';
+import NotFound from './pages/notFound';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -44,6 +45,10 @@ const App = () => {
         <Route element={<ProtectedRoutes/>}>
           <Route path='/chats' element={<Chats/>}/>
         </Route>
+
+        {/* Catch all unmatched routes - Must be last! */}
+        <Route path='*' element={<NotFound />} />
+
       </Routes>
     </>
   )
