@@ -3,6 +3,7 @@ import Card from '../../components/auth/card/card';
 import { KeyRound, Mail } from "lucide-react";
 import { useSignInMutation } from '../../store/auth/authSliceApi';
 import toast from 'react-hot-toast';
+import { useGoogleAuth } from '../../hooks/googleAuth';
 
 const signInFormFields = [
   {
@@ -35,7 +36,8 @@ const signInFormFields = [
 
 const SignIn = () => {
   const [signIn] = useSignInMutation();
-
+  const { googleLogin, isLoading: isGoogleLoading } = useGoogleAuth();
+  
   const {
     register,
     handleSubmit,
@@ -51,17 +53,13 @@ const SignIn = () => {
 
   const onSubmit = async (data) => {
     try {
-      const result = await signIn(data).unwrap();
-      if (result.success) {
+      const response = await signIn(data).unwrap();
+      if (response.success) {
         toast.success('Signed in Successfully');
       }
     } catch (err) {
       toast.error(err?.data?.message || "Network error");
     }
-  };
-
-  const handleGoogleSignIn = () => {
-    console.log("Google sign in clicked");
   };
 
   return (
@@ -71,7 +69,8 @@ const SignIn = () => {
         subTitle="Enter your credentials to sign in"
         formData={signInFormFields}
         onSubmit={onSubmit}
-        handleGoogle={handleGoogleSignIn}
+        handleGoogle={googleLogin}
+        isGoogleLoading={isGoogleLoading} 
         register={register}
         handleSubmit={handleSubmit}
         errors={errors}
@@ -82,9 +81,9 @@ const SignIn = () => {
         bottomLinkText="Don't have an account?"
         bottomLinkHref="signup"
         submitText="Sign In"
-/>
+      />
     </>
-  )
-}
+  );
+};
 
 export default SignIn;

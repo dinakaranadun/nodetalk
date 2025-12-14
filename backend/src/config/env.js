@@ -19,7 +19,8 @@ const requiredEnvVars = [
   'CLOUDINARY_API_KEY',
   'CLOUDINARY_API_SECRET',
   'ARCJET_KEY',
-  'ARCJET_ENV'
+  'ARCJET_ENV',
+  'GOOGLE_CLIENT_ID'
 ];
 
 // Check for missing environment variables
@@ -51,5 +52,6 @@ export const {
   CLOUDINARY_API_KEY,
   CLOUDINARY_API_SECRET,
   ARCJET_KEY,
-  ARCJET_ENV
+  ARCJET_ENV,
+  GOOGLE_CLIENT_ID
 } = process.env;

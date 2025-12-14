@@ -1,3 +1,4 @@
+import { CLIENT_URL, GOOGLE_CLIENT_ID } from '../config/env.js';
 import asyncHandler from 'express-async-handler';
 import validator from 'validator';
 import AppError from '../utils/apperror.js';
@@ -10,7 +11,9 @@ import {
   verifyRefreshToken
 } from '../utils/token.js';
 import { sendWelcomeEmail } from '../config/resend.js';
-import { CLIENT_URL } from '../config/env.js';
+
+import { OAuth2Client } from "google-auth-library";
+const client = new OAuth2Client(GOOGLE_CLIENT_ID);
 
 /**
  * @route   POST /api/v1/auth/signIn
@@ -38,6 +41,111 @@ const signIn = asyncHandler(async(req, res) => {
     } else {
         throw new AppError('Invalid Credentials', 400);
     }
+});
+
+
+/**
+ * @route POST /api/v1/auth/googleAuth
+ * @desc Sign in the user with google credentials or if user currently has account add googleId to their account
+ * @access Public
+ */
+
+//generate username for new sign up
+const generateUniqueUsername = async (baseName, email) => {
+  let username = (baseName || email.split('@')[0])
+    .toLowerCase()
+    .replace(/\s+/g, '')
+    .replace(/[^a-z0-9_]/g, '');
+  
+  if (username.length > 15) {
+    username = username.substring(0, 15);
+  }
+
+  let existingUser = await User.findOne({ userName: username });
+  
+  if (!existingUser) {
+    return username;
+  }
+
+  for (let i = 0; i < 10; i++) {
+    const randomSuffix = Math.floor(1000 + Math.random() * 9000); // 4 digits
+    const newUsername = `${username}${randomSuffix}`;
+    
+    existingUser = await User.findOne({ userName: newUsername });
+    
+    if (!existingUser) {
+      return newUsername;
+    }
+  }
+
+  return `${username}${Date.now()}`;
+};
+
+
+const googleAuth = asyncHandler(async(req, res) => {
+  const { access_token, email, googleId, name, picture } = req.body;
+    
+  if(!access_token || !email || !googleId){
+    throw new AppError('Missing required Google authentication data', 400);
+  }
+
+  let newUser = false;
+  
+  try {
+    await client.getTokenInfo(access_token);
+    
+    let user = await User.findOne({ email });
+    
+    if(user){
+      if(!user.googleId){
+        user.googleId = googleId;
+        user.provider = user.password ? "both" : "google";
+        user.profilePic = user.profilePic || picture;
+        await user.save();
+      }
+    } else {
+        const uniqueUsername = await generateUniqueUsername(name, email);
+
+        user = await User.create({
+            userName: uniqueUsername,
+            email,
+            googleId,
+            provider: "google",
+            profilePic: picture,
+        });
+      newUser = true;
+    }
+
+    generateAccessToken(res, user._id, user.tokenVersion);
+    await generateRefreshToken(res, user._id, user.tokenVersion, req);
+
+    const statusCode = newUser ? 201 : 200;
+    const message = newUser ? "Registration successful" : "Login successful";
+    
+    successResponse(res, statusCode, message, {
+      _id: user._id,
+      userName: user.userName,
+      email: user.email,
+    });
+
+    if(newUser){
+      try {
+        await sendWelcomeEmail(email, user.userName, CLIENT_URL);
+        console.log(`${new Date().toISOString()} - ✅ Welcome email sent to ${email}`);
+      } catch (error) {
+        console.error("Failed to send welcome email:", error);
+      }
+    }
+    
+  } catch (err) {
+    console.error('Google auth error:', err);
+    
+    if (err instanceof AppError) {
+      throw err;
+    }
+    
+    throw new AppError('Google authentication failed: ' + err.message, 400);
+  }
 });
 
 /**
@@ -80,7 +188,7 @@ const signUp = asyncHandler(async(req, res) => {
         }
     }
 
-    const user = await User.create({ userName, email, password });
+    const user = await User.create({ userName, email, password, provider:"local" });
 
     generateAccessToken(res, user._id, user.tokenVersion);
     await generateRefreshToken(res, user._id, user.tokenVersion, req);
@@ -153,4 +261,4 @@ const refreshToken = asyncHandler(async(req, res) => {
     successResponse(res, 200, "Access token refreshed");
 });
 
-export { signIn, signUp, signOut, refreshToken };
+export { signIn, googleAuth, signUp, signOut, refreshToken };
