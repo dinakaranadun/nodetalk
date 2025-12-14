@@ -98,7 +98,7 @@ const googleAuth = asyncHandler(async(req, res) => {
      throw new AppError('Google ID mismatch', 400);
     }
     
-    let user = await User.findOne({ email });
+    let user = await User.findOne({ email }).select('+password');
     
     if(user){
       if(!user.googleId){
