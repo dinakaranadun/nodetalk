@@ -11,10 +11,10 @@ authRouter.get("/check-user", authMiddleware,arcjetRead, (req, res) => {
         user: req.user
     });
 });
-authRouter.post('/signIn',signIn);
-authRouter.post('/signUp',signUp);
-authRouter.post('/signOut',arcjetAuth,signOut);
-authRouter.post('/google/auth',googleAuth);
+authRouter.post('/signIn', arcjetAuth, signIn);
+authRouter.post('/signUp', arcjetAuth, signUp);
+authRouter.post('/signOut', arcjetAuth, signOut);
+authRouter.post('/google/auth', arcjetAuth, googleAuth);
 
 
 export default authRouter;

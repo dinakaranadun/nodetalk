@@ -41,6 +41,10 @@ export const useGoogleAuth = () => {
         toast.success('Signed in successfully with Google!');
         return { success: true, data: response };
       }
+      
+       toast.error('Google sign in failed');
+       return { success: false, error: 'Sign in was not successful' };
+
     } catch (err) {
       console.error('❌ Google auth error:', err);
       const errorMessage = err?.data?.message || err?.message || 'Google sign in failed';

@@ -24,8 +24,9 @@ const userSchema = new mongoose.Schema({
     default: null,
     validate: {
       validator: function (value) {
-        if (!value) return true;
-        return validator.isStrongPassword(value);
+         if (!value) return true;
+         if (typeof value === 'string' && value.trim() === '') return false;
+         return validator.isStrongPassword(value);
       },
       message:
         "Password must contain uppercase, lowercase, number & symbol",

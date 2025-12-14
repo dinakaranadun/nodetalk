@@ -92,7 +92,11 @@ const googleAuth = asyncHandler(async(req, res) => {
   let newUser = false;
   
   try {
-    await client.getTokenInfo(access_token);
+    const tokenInfo = await client.getTokenInfo(access_token);
+    
+    if (tokenInfo.sub !== googleId) {
+     throw new AppError('Google ID mismatch', 400);
+    }
     
     let user = await User.findOne({ email });
     
