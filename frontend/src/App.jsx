@@ -1,5 +1,5 @@
 import React from 'react'
-import { Route, Routes } from 'react-router'
+import { Navigate, Route, Routes } from 'react-router'
 import  { Toaster } from 'react-hot-toast';
 import Home from './pages/home'
 import AuthLayout from './components/auth/layout'
@@ -36,6 +36,7 @@ const App = () => {
         {/* Auth routes - logged in users will be redirected away */}
         <Route element={<AuthRoutes />}>
           <Route path='/auth' element={<AuthLayout/>}>
+            <Route index element={<Navigate to="/auth/signIn" replace />} />
             <Route path='signIn' element={<SignIn/>}/>
             <Route path='signUp' element={<SignUp/>}/>
           </Route>

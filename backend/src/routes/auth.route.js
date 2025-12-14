@@ -1,5 +1,5 @@
 import express from 'express';
-import { signIn, signOut, signUp } from '../controllers/auth.controller.js';
+import { googleAuth, signIn, signOut, signUp } from '../controllers/auth.controller.js';
 import authMiddleware from '../middleware/auth.middleware.js';
 import { arcjetRead,arcjetAuth } from '../middleware/arcjet.middleware.js';
 
@@ -11,9 +11,10 @@ authRouter.get("/check-user", authMiddleware,arcjetRead, (req, res) => {
         user: req.user
     });
 });
-authRouter.post('/signIn',arcjetAuth,signIn);
-authRouter.post('/signUp',arcjetAuth,signUp);
-authRouter.post('/signOut',arcjetAuth,signOut);
+authRouter.post('/signIn', arcjetAuth, signIn);
+authRouter.post('/signUp', arcjetAuth, signUp);
+authRouter.post('/signOut', arcjetAuth, signOut);
+authRouter.post('/google/auth', arcjetAuth, googleAuth);
 
 
 export default authRouter;

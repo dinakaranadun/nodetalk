@@ -3,6 +3,7 @@ import Card from '../../components/auth/card/card';
 import {User2,KeyRound, Mail } from "lucide-react";
 import { useSignUpMutation } from '../../store/auth/authSliceApi';
 import toast from 'react-hot-toast';
+import { useGoogleAuth } from '../../hooks/googleAuth';
 
 const signUpFormFields = [
   {
@@ -67,6 +68,7 @@ const signUpFormFields = [
 
 const SignUp = () => {
   const [signUp] = useSignUpMutation();
+  const { googleLogin, isLoading: isGoogleLoading } = useGoogleAuth();
 
   const {
     register,
@@ -93,11 +95,6 @@ const SignUp = () => {
     }
   };
 
-  const handleGoogleSignUp = () => {
-    
-    
-  };
-
   return (
     <>
       <Card
@@ -105,11 +102,12 @@ const SignUp = () => {
         subTitle="Create your new account"
         formData={signUpFormFields}
         onSubmit={onSubmit}
-        handleGoogle={handleGoogleSignUp}
+        handleGoogle={googleLogin}
         register={register}
         handleSubmit={handleSubmit}
         errors={errors}
         isSubmitting={isSubmitting}
+        isGoogleLoading={isGoogleLoading}
         showRemember={false}
         showForgot={false}
         showBottomLink={true}

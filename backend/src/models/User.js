@@ -19,13 +19,24 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: [true, "Password is required"],
     minlength: 8,
-    validate: [
-        validator.isStrongPassword,
-        "Password must be at least 8 characters long and include 1 uppercase, 1 lowercase, 1 number, and 1 special character."
-    ],
-    select: false, 
+    select: false,
+    default: null,
+    validate: {
+      validator: function (value) {
+         if (!value) return true;
+         if (typeof value === 'string' && value.trim() === '') return false;
+         return validator.isStrongPassword(value);
+      },
+      message:
+        "Password must contain uppercase, lowercase, number & symbol",
+    },
+  },
+  googleId: { type: String, default: null },
+  provider: {
+    type: String,
+    enum: ["local", "google", "both"],
+    default: "local",
   },
   profilePic: {
     type: String,
@@ -52,7 +63,7 @@ userSchema.set("toObject", {
 
 // Hash password
 userSchema.pre("save", async function () {
-  if (!this.isModified("password")) return;
+  if (!this.isModified("password") || !this.password) return;
 
   try {
     this.password = await bcrypt.hash(this.password, 10);

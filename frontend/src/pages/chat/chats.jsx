@@ -1,10 +1,11 @@
 import React from 'react'
+import Navbar from '../../components/common/navbar';
 
 const Chats = () => {
   return (
-    <div>
-      <h1>chat page</h1>
-    </div>
+    <>
+      <Navbar/>
+    </>
   )
 }
 
