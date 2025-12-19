@@ -1,69 +1,65 @@
 import { useGoogleLogin } from '@react-oauth/google';
 import { useGoogleAuthMutation } from '../store/auth/authSliceApi';
 import toast from 'react-hot-toast';
+import { setCredentials } from '../store/auth/authSlice';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router';
 
 export const useGoogleAuth = () => {
   const [googleAuth, { isLoading }] = useGoogleAuthMutation();
 
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const handleGoogleSignIn = async (tokenResponse) => {
-    console.log('🔍 Token response:', tokenResponse);
     const { access_token } = tokenResponse;
-    
+
     try {
-      // Fetch user info from Google
+      // Get user info from Google
       const userInfoResponse = await fetch(
         'https://www.googleapis.com/oauth2/v2/userinfo',
         {
           headers: {
-            Authorization: `Bearer ${access_token}`
-          }
+            Authorization: `Bearer ${access_token}`,
+          },
         }
       );
-      
+
       if (!userInfoResponse.ok) {
-        throw new Error('Failed to fetch user info from Google');
+        throw new Error('Failed to fetch Google user');
       }
-      
+
       const userData = await userInfoResponse.json();
-      console.log('👤 User data from Google:', userData);
-      
+
       // Send to backend
       const response = await googleAuth({
         access_token,
         email: userData.email,
         googleId: userData.id,
         name: userData.name,
-        picture: userData.picture
+        picture: userData.picture,
       }).unwrap();
 
-
       if (response.success) {
-        toast.success('Signed in successfully with Google!');
-        return { success: true, data: response };
-      }
-      
-       toast.error('Google sign in failed');
-       return { success: false, error: 'Sign in was not successful' };
+        
+        dispatch(setCredentials(response?.data))
+        navigate("/chats", { replace: true });
+        toast.success('Signed in Successfully');
 
+      } else {
+        toast.error('Google sign in failed');
+      }
     } catch (err) {
-      console.error('❌ Google auth error:', err);
-      const errorMessage = err?.data?.message || err?.message || 'Google sign in failed';
-      toast.error(errorMessage);
-      return { success: false, error: errorMessage };
+      console.error(err);
+      toast.error(err?.data?.message || 'Google sign in failed');
     }
   };
 
-  const googleLogin = useGoogleLogin({ 
+  const googleLogin = useGoogleLogin({
     onSuccess: handleGoogleSignIn,
-    onError: (error) => {
-      console.error('Google login error:', error);
-      toast.error('Google Sign In Failed');
-    },
-    scope: 'email profile'
+    onError: () => toast.error('Google Sign In Failed'),
+    scope: 'email profile',
   });
 
-  return {
-    googleLogin,
-    isLoading
-  };
+  return { googleLogin, isLoading };
 };

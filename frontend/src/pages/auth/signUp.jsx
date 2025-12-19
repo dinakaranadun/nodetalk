@@ -4,6 +4,9 @@ import {User2,KeyRound, Mail } from "lucide-react";
 import { useSignUpMutation } from '../../store/auth/authSliceApi';
 import toast from 'react-hot-toast';
 import { useGoogleAuth } from '../../hooks/googleAuth';
+import { useNavigate } from 'react-router';
+import { setCredentials } from '../../store/auth/authSlice';
+import { useDispatch } from 'react-redux';
 
 const signUpFormFields = [
   {
@@ -70,6 +73,9 @@ const SignUp = () => {
   const [signUp] = useSignUpMutation();
   const { googleLogin, isLoading: isGoogleLoading } = useGoogleAuth();
 
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const {
     register,
     handleSubmit,
@@ -86,8 +92,10 @@ const SignUp = () => {
 
   const onSubmit = async (data) => {
     try {
-      const result = await signUp(data).unwrap();
-      if (result.success) {
+      const response = await signUp(data).unwrap();
+      if (response.success) {
+        dispatch(setCredentials(response?.data))
+        navigate("/chats", { replace: true });
         toast.success('Signed up Successfully');
       }
     } catch (err) {

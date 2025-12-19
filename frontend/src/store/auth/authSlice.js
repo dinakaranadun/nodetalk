@@ -28,5 +28,6 @@ export default authSlice.reducer;
 
 // Selectors
 export const selectUser = (state) => state.auth.user;
+export const clearUser = (state) => state.auth.clearCredentials;
 export const selectIsAuthenticated = (state) => state.auth.isAuthenticated;
 export const selectIsLoading = (state) => state.auth.isLoading;

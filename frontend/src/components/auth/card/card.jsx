@@ -81,7 +81,7 @@ const Card = ({
               <button
                 type="submit"
                 disabled={isSubmitting || isGoogleLoading}
-                className="w-full bg-gradient-to-br from-blue-600 to-purple-700 text-white py-3 rounded-lg font-medium hover:from-blue-700 hover:to-purple-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-md hover:shadow-lg"
+                className="w-full bg-gradient-to-br from-blue-600 to-purple-700 text-white py-3 rounded-lg font-medium hover:from-blue-700 hover:to-purple-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-md hover:shadow-lg cursor-pointer"
               >
                 {isSubmitting ? (
                   <span className="loading loading-dots loading-sm"></span>

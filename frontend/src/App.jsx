@@ -8,51 +8,55 @@ import SignUp from './pages/auth/signUp'
 import { useDispatch } from 'react-redux';
 import { useCheckUserQuery } from './store/auth/authSliceApi';
 import { useEffect } from 'react';
-import { clearCredentials, setCredentials } from './store/auth/authSlice';
+import { clearCredentials,  setCredentials } from './store/auth/authSlice';
 import ProtectedRoutes, { AuthRoutes } from './utils/protectedRoutes';
 import Chats from './pages/chat/chats';
 import NotFound from './pages/notFound';
 
 const App = () => {
   const dispatch = useDispatch();
+
   const { data, isLoading, isError, isSuccess } = useCheckUserQuery();
 
-   useEffect(() => {
+  const isInitializing = isLoading && !data ;
+
+  useEffect(() => {
     if (isSuccess && data?.user) {
       dispatch(setCredentials(data.user));
-    } else if (!isLoading && (isError || !data?.user)) {
+    } else if (isError) {
       dispatch(clearCredentials());
     }
-  }, [data, isLoading, isError, isSuccess, dispatch]);
+  }, [isSuccess, isError, data, dispatch]);
+
+  if (isInitializing) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <span className="loading loading-spinner loading-lg text-primary"></span>
+      </div>
+    );
+  }
 
   return (
     <>
-      <div>
-        <Toaster />
-      </div>
+      <Toaster />
       <Routes>
-        <Route path='/' element={<Home/>}/>
+        <Route path="/" element={<Home />} />
 
-        {/* Auth routes - logged in users will be redirected away */}
         <Route element={<AuthRoutes />}>
-          <Route path='/auth' element={<AuthLayout/>}>
+          <Route path="/auth" element={<AuthLayout />}>
             <Route index element={<Navigate to="/auth/signIn" replace />} />
-            <Route path='signIn' element={<SignIn/>}/>
-            <Route path='signUp' element={<SignUp/>}/>
+            <Route path="signIn" element={<SignIn />} />
+            <Route path="signUp" element={<SignUp />} />
           </Route>
         </Route>
-        
-        {/* Protected routes - only authenticated users can access */}
-        <Route element={<ProtectedRoutes/>}>
-          <Route path='/chats' element={<Chats/>}/>
+
+        <Route element={<ProtectedRoutes />}>
+          <Route path="/chats" element={<Chats />} />
         </Route>
 
-        {/* Catch all unmatched routes - Must be last! */}
-        <Route path='*' element={<NotFound />} />
-
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </>
-  )
-}
-
+  );
+};
 export default App

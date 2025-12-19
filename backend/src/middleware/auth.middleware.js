@@ -18,7 +18,7 @@ const authMiddleware = async (req, res, next) => {
       try {
         const decoded = jwt.verify(accessToken, JWT_SECRET);
 
-        const user = await User.findById(decoded.userId).select('_id tokenVersion');
+        const user = await User.findById(decoded.userId).select('_id tokenVersion email userName profilePic');
 
         if (!user) {
           throw new AppError('User not found', 401);
@@ -31,6 +31,8 @@ const authMiddleware = async (req, res, next) => {
         req.user = {
           _id: user._id,
           userName:user.userName,
+          email:user.email,
+          profilePic:user.profilePic,
           tokenVersion: user.tokenVersion
         };
 

@@ -4,6 +4,9 @@ import { KeyRound, Mail } from "lucide-react";
 import { useSignInMutation } from '../../store/auth/authSliceApi';
 import toast from 'react-hot-toast';
 import { useGoogleAuth } from '../../hooks/googleAuth';
+import { useNavigate } from 'react-router';
+import { useDispatch } from 'react-redux';
+import { setCredentials } from '../../store/auth/authSlice';
 
 const signInFormFields = [
   {
@@ -37,6 +40,9 @@ const signInFormFields = [
 const SignIn = () => {
   const [signIn] = useSignInMutation();
   const { googleLogin, isLoading: isGoogleLoading } = useGoogleAuth();
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate()
   
   const {
     register,
@@ -55,6 +61,8 @@ const SignIn = () => {
     try {
       const response = await signIn(data).unwrap();
       if (response.success) {
+        dispatch(setCredentials(response?.data))
+        navigate("/chats", { replace: true });
         toast.success('Signed in Successfully');
       }
     } catch (err) {

@@ -35,7 +35,8 @@ const signIn = asyncHandler(async(req, res) => {
         
         successResponse(res, 200, "Login successful", {
             _id: user._id,
-            fullName: user.fullName,
+            userName: user.userName,
+            profilePic:user.profilePic,
             email: user.email,
         });
     } else {
@@ -129,6 +130,7 @@ const googleAuth = asyncHandler(async(req, res) => {
     successResponse(res, statusCode, message, {
       _id: user._id,
       userName: user.userName,
+      profilePic:user.profilePic,
       email: user.email,
     });
 
@@ -201,6 +203,7 @@ const signUp = asyncHandler(async(req, res) => {
         _id: user._id,
         userName: user.userName,
         email: user.email,
+        profilePic:user.profilePic
     });
 
     try {

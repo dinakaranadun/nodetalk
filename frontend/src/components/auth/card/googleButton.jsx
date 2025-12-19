@@ -3,7 +3,7 @@ const GoogleAuthButton = ({ onClick, isGoogleLoading, text = "Sign with Google" 
     <button
       type="button"
       onClick={onClick}
-      className="w-full bg-white text-gray-700 border border-gray-300 py-3 px-4 rounded-lg font-medium hover:bg-gray-50 hover:border-gray-400 transition-all flex items-center justify-center gap-3 shadow-sm hover:shadow mb-4"
+      className="w-full bg-white text-gray-700 border border-gray-300 py-3 px-4 rounded-lg font-medium hover:bg-gray-50 hover:border-gray-400 transition-all flex items-center justify-center gap-3 shadow-sm hover:shadow mb-4 cursor-pointer"
       disabled={isGoogleLoading}
     >
     {isGoogleLoading ? (
