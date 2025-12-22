@@ -6,7 +6,7 @@ import NoChatsFound from '../noChatsFound';
 import UserCard from './userCard';
 
 
-const ChatsList = ({ onlineUsers = [], setSelectedUser }) => {
+const ChatsList = ({ onlineUsers = [], setUser ,setSelectedChat }) => {
   const { data: chats, isLoading: isUsersLoading, isError } = useGetMyChannelsQuery();
 
   if (isUsersLoading) return <UsersLoadingSkeleton />;
@@ -34,7 +34,7 @@ const ChatsList = ({ onlineUsers = [], setSelectedUser }) => {
   return (
     <div className="flex flex-col gap-3 p-1">
       {chatData?.map((chat) => (
-        <UserCard key={chat.channelId} chat={chat} setSelectedUser={setSelectedUser} onlineUsers={onlineUsers}/>
+        <UserCard key={chat.channelId} data={chat} setSelectedUser={setUser} onlineUsers={onlineUsers} setSelectedChat={setSelectedChat}/>
       ))}
     </div>
   );

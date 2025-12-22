@@ -7,7 +7,7 @@ import UserCard from './userCard';
 
 
 
-const ContactList = ({ onlineUsers = [], setSelectedUser }) => {
+const ContactList = ({ onlineUsers = [], setUser ,setSelectedChat}) => {
   const { data: contacts, isLoading: isUsersLoading, isError } = useGetContactQuery();
 
   if (isUsersLoading) return <UsersLoadingSkeleton />;
@@ -35,7 +35,7 @@ const ContactList = ({ onlineUsers = [], setSelectedUser }) => {
   return (
     <div className="flex flex-col gap-3 p-1">
       {contactsData?.map((contact) => (
-        <UserCard key={contact._id} chat={contact} setSelectedUser={setSelectedUser} onlineUsers={onlineUsers}/>
+        <UserCard key={contact._id} data={contact} setSelectedUser={setUser} onlineUsers={onlineUsers} setSelectedChat={setSelectedChat}/>
       ))}
     </div>
   );
