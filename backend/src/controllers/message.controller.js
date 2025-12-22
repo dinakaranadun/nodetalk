@@ -37,7 +37,7 @@ const getChannelList = asyncHandler(async (req, res) => {
   // Find all DM channels where user is a member
   const channels = await DMChannel.find({ members: senderId })
     .sort({ updatedAt: -1 })
-    .populate('members', 'username profilePic');
+    .populate('members', 'userName profilePic');
 
   if (!channels || channels.length === 0) {
     return successResponse(res, 200, 'No DM channels found', []);
