@@ -1,15 +1,18 @@
+import formatChatDate from "../../../utils/formatDate";
 
-const UserCard = ({ chat, setSelectedUser, onlineUsers }) => {
-  const userName = chat.friend?.userName || 'Unknown';
-  const profilePic = chat.friend?.profilePic;
-  const userId = chat.friend?._id;
+const UserCard = ({ data, setSelectedUser, onlineUsers,setSelectedChat }) => {
+  const userName = data.friend?.userName || data.userName || 'Unknown';
+  const profilePic = data.friend?.profilePic || data.profilePic ;
+  const userId = data.friend?._id || data._id ;
+  const channelId = data.channelId || null;
   const isOnline = onlineUsers.includes(userId);
   const firstLetter = userName[0]?.toUpperCase() || '?';
+  const date = data.updatedAt;
 
   return (
     <div
       className="group relative bg-white/25 backdrop-blur-md p-4 rounded-2xl cursor-pointer border border-white/40 hover:border-white/70 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:bg-white/35 overflow-hidden"
-      onClick={() => setSelectedUser(chat)}
+      onClick={() => {setSelectedUser(userId),setSelectedChat(channelId)}}
     >
       <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-white/5 opacity-0 group-hover:opacity-100 transition-opacity" />
 
@@ -43,7 +46,8 @@ const UserCard = ({ chat, setSelectedUser, onlineUsers }) => {
         </div>
 
         <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-          <div className="w-2.5 h-2.5 rounded-full bg-white shadow-lg" />
+          <div className="text-xs text-white/80" >{formatChatDate(date)}</div>
+          
         </div>
       </div>
     </div>

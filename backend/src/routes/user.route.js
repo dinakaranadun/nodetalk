@@ -7,7 +7,7 @@ import { arcjetExpensive, arcjetRead } from '../middleware/arcjet.middleware.js'
 
 const userRouter = express.Router();
 
-userRouter.get('/me',authMiddleware,arcjetRead,getUserProfile);
+userRouter.get('/get-user/:userId',authMiddleware,arcjetRead,getUserProfile);
 userRouter.patch('/update-avatar',authMiddleware,arcjetExpensive,upload.single('avatar'),updateAvatar);
 
 export default userRouter;

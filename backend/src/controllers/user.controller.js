@@ -10,7 +10,7 @@ import cloudinary from '../config/cloudinary.js';
  * @access  Private
  */
 const getUserProfile = asyncHandler(async (req, res) => {
-    const userId = req.user._id;
+    const userId = req.params.userId;
 
     const user = await User.findById(userId).select("-password");
 
