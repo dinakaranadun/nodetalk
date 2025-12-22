@@ -26,7 +26,7 @@ const ChatHeader = ({handleBackToList,user}) => {
                           className="w-full h-full object-cover"
                         />
                       ) : (
-                        userData?.friend?.userName?.charAt(0)
+                        userData?.userName?.charAt(0)
                       )}
                 </div>
                 {userData?.online && (
@@ -34,7 +34,7 @@ const ChatHeader = ({handleBackToList,user}) => {
                 )}
               </div>
               <div className="min-w-0 flex-1">
-                <h2 className="font-semibold text-gray-900 truncate">{userData?.userName}</h2>
+                <h2 className="font-semibold text-gray-900 truncate capitalize">{userData?.userName}</h2>
                 <p className="text-sm text-gray-500 truncate">
                   {userData?.online ? 'Active now' : 'Offline'}
                 </p>
