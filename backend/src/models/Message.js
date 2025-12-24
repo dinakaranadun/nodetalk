@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 
-
 const messageSchema = new mongoose.Schema({
   channelId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -20,7 +19,7 @@ const messageSchema = new mongoose.Schema({
     default: ""
   },
 
-  // message type: "text", "image", "file", "audio", etc.
+  // message type: "text", "image", "file", "audio"
   type: {
     type: String,
     enum: ["text", "image", "file", "audio"],
@@ -28,6 +27,11 @@ const messageSchema = new mongoose.Schema({
   },
 
   // media fields
+  mediaType: {
+    type: String, // e.g., "image/png", "application/pdf", "audio/mpeg"
+    default: null
+  },
+  
   mediaUrl: {
     type: String,
     default: null
@@ -45,5 +49,5 @@ const messageSchema = new mongoose.Schema({
 
 }, { timestamps: true });
 
-const Message = mongoose.model('Message',messageSchema);
+const Message = mongoose.model('Message', messageSchema);
 export default Message;

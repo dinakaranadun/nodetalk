@@ -1,7 +1,7 @@
-import { ArrowLeft, MoreVertical, Phone, Video } from 'lucide-react'
+import { ArrowLeft, MoreVertical, Phone, Video, X } from 'lucide-react'
 import { useGetUserQuery } from '../../../store/user/userSliceApi'
 
-const ChatHeader = ({handleBackToList,user}) => {
+const ChatHeader = ({handleBackToList,user,setUser,setChannelId}) => {
   const {data:userInfo} = useGetUserQuery(user,{
     skip: !user, 
     refetchOnMountOrArgChange: true,
@@ -49,6 +49,9 @@ const ChatHeader = ({handleBackToList,user}) => {
               </button>
               <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
                 <MoreVertical className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
+              </button>
+              <button onClick={()=>{setUser(null),setChannelId(null)}} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                  <X className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600"/>
               </button>
             </div>
           </div>

@@ -21,14 +21,27 @@ const chatSliceApi = apiSlice.injectEndpoints({
                 url:`${CHAT_URL}/${id}/channel`,
                 method:'GET',
             }),
+            providesTags:['Chats']
         }),
-        sendMessage:builder.mutation({
-            query:({receiverId,data}) => ({
-                url:`${CHAT_URL}/${receiverId}/send`,
-                method:'POST',
-                body:data
+        sendMessage: builder.mutation({
+            query: ({receiverId, data}) => {
+                const isFormData = data instanceof FormData;
+                
+                return {
+                url: `${CHAT_URL}/${receiverId}/send`,
+                method: 'POST',
+                body: data,
+                ...(isFormData && { 
+                    formData: true,
+                    prepareHeaders: (headers) => {
+                    headers.delete('content-type');
+                    return headers;
+                    }
+                })
+                };
+            },
+            invalidatesTags: ['Chats']
             }),
-        }),
     }),
 })
 
