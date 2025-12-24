@@ -102,7 +102,6 @@ const getDMChannel = asyncHandler(async(req,res)=>{
  * @access  Private
  */
 
-
 // Helper to upload file to Cloudinary per channel
 const uploadMessageFile = (fileBuffer, channelId) => {
   return new Promise((resolve, reject) => {
@@ -114,12 +113,16 @@ const uploadMessageFile = (fileBuffer, channelId) => {
         fetch_format: "auto"
       },
       (error, result) => {
-        if (error) return reject(new AppError("File upload failed", 500));
+        if (error) {
+          console.error("Cloudinary error:", error);
+          return reject(new AppError("File upload failed", 500));
+        }
         resolve(result);
       }
     );
 
-    stream.end(fileBuffer);
+    stream.write(fileBuffer);
+    stream.end();
   });
 };
 
@@ -152,16 +155,33 @@ const sendMessage = asyncHandler(async (req, res) => {
     type: "text"
   };
 
-  // Handle file upload if exists
   if (req.file) {
-    const result = await uploadMessageFile(req.file.buffer, channel._id);
-    messageData.type = "file"; 
-    messageData.mediaUrl = result.secure_url;
-    messageData.mediaSize = result.bytes;
-    messageData.mediaName = result.original_filename;
+    try {
+      const result = await uploadMessageFile(req.file.buffer, channel._id);
+      
+      if (req.file.mimetype.startsWith('image/')) {
+        messageData.type = "image";
+        messageData.mediaType = req.file.mimetype;
+      } else if (req.file.mimetype === 'application/pdf') {
+        messageData.type = "file";
+        messageData.mediaType = "application/pdf";
+      } else if (req.file.mimetype.startsWith('audio/')) {
+        messageData.type = "audio";
+        messageData.mediaType = req.file.mimetype;
+      } else {
+        messageData.type = "file";
+        messageData.mediaType = req.file.mimetype;
+      }
+      
+      messageData.mediaUrl = result.secure_url;
+      messageData.mediaSize = req.file.size;
+      messageData.mediaName = req.file.originalname;
+    } catch (error) {
+      console.error("File upload failed:", error);
+      throw new AppError("Failed to upload file. Please try again.", 500);
+    }
   }
 
-  // STEP 4 — Save message
   const message = await Message.create(messageData);
 
   // Update channel timestamp
@@ -172,6 +192,5 @@ const sendMessage = asyncHandler(async (req, res) => {
 
   successResponse(res, 201, `Message sent to: ${receiverId}`, message);
 });
-
 
 export{getContacts,getDMChannel,getChannelList,sendMessage};

@@ -19,7 +19,7 @@ const UserCard = ({ data, setSelectedUser, onlineUsers,setSelectedChat }) => {
       <div className="relative flex items-center gap-4">
         <div className="relative">
           <div className="size-14 rounded-full relative">
-            {profilePic ? (
+            {profilePic  ? (
               <img
                 src={profilePic}
                 alt={userName}
