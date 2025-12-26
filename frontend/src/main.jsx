@@ -7,13 +7,16 @@ import App from './App.jsx'
 import {BrowserRouter} from 'react-router'
 import { Provider } from 'react-redux'
 import store from './store/store.js'
+import SocketProvider from './providers/socket.provider.jsx'
 
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
     <Provider store={store}>
       <StrictMode>
           <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
-            <App/>
+            <SocketProvider>
+              <App/>
+            </SocketProvider>
           </GoogleOAuthProvider>
       </StrictMode>
     </Provider>

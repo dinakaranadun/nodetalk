@@ -1,6 +1,10 @@
+import { useSelector } from "react-redux";
+import { selectOnlineUsers } from "../../../store/chat/chatSlice";
 import formatChatDate from "../../../utils/formatDate";
 
-const UserCard = ({ data, setSelectedUser, onlineUsers,setSelectedChat }) => {
+const UserCard = ({ data, setSelectedUser, setSelectedChat }) => {
+  const onlineUsers = useSelector(selectOnlineUsers); 
+    
   const userName = data.friend?.userName || data.userName || 'Unknown';
   const profilePic = data.friend?.profilePic || data.profilePic ;
   const userId = data.friend?._id || data._id ;
@@ -8,6 +12,9 @@ const UserCard = ({ data, setSelectedUser, onlineUsers,setSelectedChat }) => {
   const isOnline = onlineUsers.includes(userId);
   const firstLetter = userName[0]?.toUpperCase() || '?';
   const date = data.updatedAt;
+
+
+  
 
   return (
     <div
@@ -32,7 +39,7 @@ const UserCard = ({ data, setSelectedUser, onlineUsers,setSelectedChat }) => {
             )}
           </div>
           {isOnline && (
-            <div className="absolute -bottom-0.5 -right-0.5 size-5 bg-green-500 rounded-full border-[3px] border-white shadow-lg animate-pulse" />
+            <div className="absolute -bottom-0.5 -right-0.5 size-5 bg-green-500 rounded-full border-[3px] border-white shadow-lg" />
           )}
         </div>
 
