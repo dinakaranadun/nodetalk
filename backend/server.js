@@ -12,11 +12,12 @@ import userRouter from './src/routes/user.route.js';
 import messageRouter from './src/routes/message.route.js';
 import { errorHandler, notFound } from './src/middleware/error.middleware.js';
 import requestTimeout from './src/middleware/requestTimeOut.middleware.js';
+import { app, server } from './src/config/socket.js'; 
 
 // ============================================
 // Environment Variables Validation
 // ============================================
-const requiredEnvVars = ['PORT', 'NODE_ENV', 'MONGODB_URI', 'JWT_SECRET','FRONTEND_URL'];
+const requiredEnvVars = ['PORT', 'NODE_ENV', 'MONGODB_URI', 'JWT_SECRET', 'FRONTEND_URL'];
 const missingEnvVars = requiredEnvVars.filter(varName => !process.env[varName]);
 
 if (missingEnvVars.length > 0) {
@@ -28,11 +29,7 @@ if (missingEnvVars.length > 0) {
 // App Configuration
 // ============================================
 const isDevelopment = NODE_ENV === 'development';
-const allowedOrigins = isDevelopment 
-  ? ['http://localhost:5173']
-  : [FRONTEND_URL].filter(Boolean);
-
-const app = express();
+const allowedOrigins = isDevelopment ? ['http://localhost:5173'] : [FRONTEND_URL].filter(Boolean);
 
 // ============================================
 // Security Middleware
@@ -47,9 +44,7 @@ app.use(helmet({
 // ============================================
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow requests with no origin (mobile apps, Postman, curl, etc.)
     if (!origin) return callback(null, true);
-    
     if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
@@ -87,7 +82,6 @@ app.use(requestTimeout);
 app.get('/health', async (req, res) => {
   try {
     const dbStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
-    
     const healthData = {
       status: dbStatus === 'connected' ? 'OK' : 'DEGRADED',
       timestamp: new Date().toISOString(),
@@ -130,7 +124,7 @@ app.get('/', (req, res) => {
 });
 
 // ============================================
-// API Routes (Arcjet protection should be on these routes)
+// API Routes
 // ============================================
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/user', userRouter);
@@ -141,11 +135,6 @@ app.use('/api/v1/messages', messageRouter);
 // ============================================
 app.use(notFound);
 app.use(errorHandler);
-
-// ============================================
-// Server Instance
-// ============================================
-let server;
 
 // ============================================
 // Graceful Shutdown Handler
@@ -159,7 +148,6 @@ const gracefulShutdown = async (signal) => {
 
   server.close(async () => {
     console.log('✅ HTTP server closed');
-    
     try {
       await mongoose.connection.close(false);
       console.log('✅ Database connection closed');
@@ -199,17 +187,16 @@ process.on('uncaughtException', (error) => {
 // ============================================
 const startServer = async () => {
   try {
-    // Connect to database first
     await connectDatabase();
     console.log('✅ Database connected successfully');
 
-    // Start server after successful DB connection
-    server = app.listen(PORT, () => {
+    server.listen(PORT, () => {
       console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
       console.log(`🚀 Server running in ${NODE_ENV} mode`);
       console.log(`📡 Listening on port ${PORT}`);
       console.log(`🌐 API URL: http://localhost:${PORT}`);
       console.log(`💚 Health check: http://localhost:${PORT}/health`);
+      console.log(`🔌 Socket.IO ready for connections`);
       console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     });
 
@@ -229,7 +216,6 @@ const startServer = async () => {
   }
 };
 
-// Start the server
 startServer();
 
 export default app;

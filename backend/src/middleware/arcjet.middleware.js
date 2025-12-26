@@ -2,10 +2,9 @@ import { ajRead, ajWrite, ajExpensive, ajAuth } from "../config/arcjet.js";
 import { NODE_ENV } from "../config/env.js";
 import AppError from "../utils/apperror.js";
 
-// Helper to check for spoofed bots
+// Check for spoofed bots
 const isSpoofedBot = (result) =>
- result.reason?.isBot?.() && result.reason?.isSpoofed?.();
-
+  result.reason?.isBot?.() && result.reason?.isSpoofed?.();
 
 const createArcjetMiddleware = (ajInstance, options = {}) => {
   const {
@@ -15,34 +14,35 @@ const createArcjetMiddleware = (ajInstance, options = {}) => {
 
   return async (req, res, next) => {
     try {
-      // Skip auth check if not required (for auth routes)
+      // Skip auth check 
       if (requireAuth && (!req.user || !req.user._id)) {
         return next(new AppError("Authentication required", 401));
       }
 
-      // userId for rate limiting if user exists
-      if (req.user && req.user._id) {
-        req.arcjet = {
-          userId: req.user._id.toString(),
-        };
-      }
-
       const tokenCost = getTokenCost(req);
+
+      // Characteristics for Arcjet
+      const characteristics = {};
+      if (req.user && req.user._id) {
+        characteristics.userId = req.user._id.toString();
+      }
 
       // Protect the request
       const decision = await ajInstance.protect(req, { 
-        requested: tokenCost 
+        requested: tokenCost,
+        ...characteristics
       });
 
       NODE_ENV === 'development' && console.log("Arcjet decision:", {
         isDenied: decision.isDenied(),
         reason: decision.reason,
         tokenCost,
+        characteristics,
       });
 
       // Handle denied requests
       if (decision.isDenied()) {
-         if (decision.reason.isRateLimit()) {
+        if (decision.reason.isRateLimit()) {
           const retryAfter =
             typeof decision.reason.reset === "number" && decision.reason.reset > Date.now()
               ? Math.ceil((decision.reason.reset - Date.now()) / 1000)
@@ -85,7 +85,6 @@ const createArcjetMiddleware = (ajInstance, options = {}) => {
 export const arcjetRead = createArcjetMiddleware(ajRead, {
   requireAuth: true,
   getTokenCost: () => 1,
-  
 });
 
 export const arcjetWrite = createArcjetMiddleware(ajWrite, {
@@ -104,4 +103,3 @@ export const arcjetAuth = createArcjetMiddleware(ajAuth, {
 });
 
 export default arcjetWrite;
-

@@ -24,7 +24,7 @@ const generateAccessToken = (res, userId, tokenVersion) => {
   res.cookie('accessToken', token, {
     httpOnly: true,
     secure: NODE_ENV !== 'development',
-    sameSite: 'strict',
+    sameSite: "Strict",
   });
 
   return token;
@@ -56,7 +56,7 @@ const generateRefreshToken = async (res, userId, tokenVersion, req) => {
   res.cookie('refreshToken', token, {
     httpOnly: true,
     secure: NODE_ENV !== 'development',
-    sameSite: 'strict',
+    sameSite: "Strict",
     maxAge: ms(JWT_REFRESH_EXPIRES_IN),
   });
 
