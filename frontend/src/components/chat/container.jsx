@@ -6,6 +6,7 @@ import ChatHeader from './chatArea/chatHeader';
 import MessagesArea from './chatArea/messagesArea';
 import Input from './chatArea/input';
 import toast from 'react-hot-toast';
+import socket from '../../config/socketIo';
 
 const ChatInterface = () => {
   const [channelId, setChannelId] = useState(null);
@@ -48,8 +49,12 @@ const ChatInterface = () => {
       
       if(response.success){
         console.log(`message sent to ${user}`);
-        setMessage('');
         
+        if (socket && response.data) {
+          socket.emit('send-message', response.data);
+        }
+        
+        setMessage('');
         inputRef.current?.resetFile();
       }
     } catch (err) {
@@ -87,9 +92,10 @@ const ChatInterface = () => {
           />
         </div>
 
-        {/* Messages (ONLY THIS SCROLLS) */}
+        {/* Messages */}
         <MessagesArea
           channelId={channelId}
+          userId={user}
         />
 
         {/* Input */}

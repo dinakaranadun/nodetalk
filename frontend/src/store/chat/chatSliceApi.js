@@ -21,7 +21,6 @@ const chatSliceApi = apiSlice.injectEndpoints({
                 url:`${CHAT_URL}/${id}/channel`,
                 method:'GET',
             }),
-            providesTags:['Chats']
         }),
         sendMessage: builder.mutation({
             query: ({receiverId, data}) => {
@@ -40,7 +39,6 @@ const chatSliceApi = apiSlice.injectEndpoints({
                 })
                 };
             },
-            invalidatesTags: ['Chats']
             }),
     }),
 })
