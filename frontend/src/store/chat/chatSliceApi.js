@@ -15,6 +15,7 @@ const chatSliceApi = apiSlice.injectEndpoints({
                 url:`${CHAT_URL}/myChannels`,
                 method:'GET',
             }),
+            providesTags:['Chats']
         }),
         getDMChannel:builder.query({
             query:(id) => ({
@@ -39,7 +40,9 @@ const chatSliceApi = apiSlice.injectEndpoints({
                 })
                 };
             },
+            invalidatesTags:['Chats']
             }),
+            
     }),
 })
 

@@ -192,11 +192,6 @@ const sendMessage = asyncHandler(async (req, res) => {
     io.to(receiverSocketId).emit('message',message)
   }
 
-  const messageForSender = {
-    ...message.toObject(),
-    userId: senderId 
-  };
-
   const senderSocketId = getReceiverSocketId(senderId);
   if (senderSocketId) {
     io.to(senderSocketId).emit('message', message);

@@ -2,54 +2,17 @@ import { useSelector } from "react-redux";
 import { selectUser } from "../../../store/auth/authSlice";
 import formatChatDate from "../../../utils/formatDate";
 import { FileText, Download } from "lucide-react";
-import { useRef, useEffect, useState } from "react";
-import { useGetDMChannelQuery } from "../../../store/chat/chatSliceApi";
-import socket from "../../../config/socketIo";
-import { useHandleDownlaod } from "../../../hooks/handleDownload";
+import { useRef, useEffect } from "react";
+import { useHandleDownload } from "../../../hooks/handleDownload";
 
-const MessagesArea = ({ channelId, userId }) => {
-  const { data: dmMessages, isLoading, isFetching } =
-    useGetDMChannelQuery(userId, {
-      skip: !userId,
-      refetchOnMountOrArgChange: true,
-    });
-
-  // Store all socket messages with their channelId
-  const [socketMessages, setSocketMessages] = useState([]);
+const MessagesArea = ({ messages, isLoading }) => {
   const me = useSelector(selectUser)?._id;
   const bottomRef = useRef(null);
-
-  const { handleDownload } = useHandleDownlaod();
-
-  // Filter socket messages for current channel and combine with API data
-  const currentMessages = [
-    ...(dmMessages?.data || []),
-    ...socketMessages.filter(msg => msg.channelId === channelId)
-  ];
-
-  useEffect(() => {
-    if (!socket || !channelId) return;
-
-    const handleNewMessage = (newMessage) => {
-      if (newMessage.channelId !== channelId) return;
-
-      setSocketMessages((prev) => {
-        const exists = prev.some((msg) => msg._id === newMessage._id);
-        if (exists) return prev;
-        return [...prev, newMessage];
-      });
-    };
-
-    socket.on("message", handleNewMessage);
-
-    return () => {
-      socket.off("message", handleNewMessage);
-    };
-  }, [channelId]);
+  const { handleDownload } = useHandleDownload();
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [currentMessages.length]);
+  }, [messages.length]);
 
   const isImage = (type) => type === "image";
   const isFile = (type) => type === "file" || type === "audio";
@@ -70,17 +33,17 @@ const MessagesArea = ({ channelId, userId }) => {
 
   return (
     <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-3 sm:space-y-4 bg-gray-50">
-      {isLoading || isFetching ? (
+      {isLoading ? (
         <div className="flex items-center justify-center h-full text-gray-500">
           <p>Loading messages...</p>
         </div>
-      ) : currentMessages.length === 0 ? (
+      ) : messages.length === 0 ? (
         <div className="flex items-center justify-center h-full text-gray-500">
           <p>Say Hi... 👋</p>
         </div>
       ) : (
         <>
-          {currentMessages.map((msg) => {
+          {messages.map((msg) => {
             const isMe = isMyMessage(msg);
 
             return (
@@ -141,7 +104,7 @@ const MessagesArea = ({ channelId, userId }) => {
 
                   {/* Text */}
                   {msg.content && (
-                    <p className="text-sm break-words whitespace-pre-wrap">
+                    <p className="text-sm wrap-break-words whitespace-pre-wrap">
                       {msg.content}
                     </p>
                   )}

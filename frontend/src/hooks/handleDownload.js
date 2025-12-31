@@ -1,6 +1,6 @@
 import React from 'react'
 
-const useHandleDownlaod = () => {
+const useHandleDownload = () => {
     const handleDownload = async (url, filename) => {
     try {
       const response = await fetch(url);
@@ -22,4 +22,4 @@ const useHandleDownlaod = () => {
   return {handleDownload}
 }
 
-export {useHandleDownlaod}
+export {useHandleDownload}
