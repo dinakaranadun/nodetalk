@@ -40,7 +40,7 @@ io.on('connection', (socket) => {
   });
 });
 
-//  get socket ID by user ID
+// Get socket ID by user ID
 export const getReceiverSocketId = (userId) => {
   return userSocketMap[userId];
 };

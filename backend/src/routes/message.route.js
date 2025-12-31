@@ -8,6 +8,6 @@ const messageRouter = express.Router();
 
 messageRouter.get('/contacts',authMiddleware,getContacts);
 messageRouter.get('/myChannels',authMiddleware,getChannelList);
-messageRouter.get('/:channelId/channel',authMiddleware,getDMChannel);
+messageRouter.get('/:receiverId/channel',authMiddleware,getDMChannel);
 messageRouter.post('/:receiverId/send', authMiddleware, upload.single('file'), sendMessage);
 export default messageRouter;

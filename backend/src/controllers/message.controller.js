@@ -5,6 +5,7 @@ import { successResponse } from '../utils/response.js';
 import DMChannel from '../models/DMChannel.js';
 import Message from '../models/Message.js';
 import cloudinary from '../config/cloudinary.js';
+import { getReceiverSocketId, io } from '../config/socket.js';
 
 
 /**
@@ -65,36 +66,38 @@ const getChannelList = asyncHandler(async (req, res) => {
  * @access  Private
  */
 
-const getDMChannel = asyncHandler(async(req,res)=>{
-    const {channelId} = req.params;
-     const userId = req.user._id;
-
-    // Verify user is a member of the channel
-    const channel = await DMChannel.findOne({
-      _id: channelId,
-      members: userId
-    });
-
-    if (!channel) {
-      throw new AppError('Channel not found or access denied', 403);
-    }
-
-    const limit = 20;
-    const page = parseInt(req.query.page) || 1;
-    const skip = (page -1) * limit;
-
-    const channelMessages = await Message.find({channelId})
-    .sort({createdAt:1})
+const getDMChannel = asyncHandler(async(req, res) => {
+  const { receiverId } = req.params;
+  const userId = req.user._id;
+  
+  // Find channel 
+  const channel = await DMChannel.findOne({
+    members: { $all: [userId, receiverId] }
+  });
+  
+  // If no channel return empty messages
+  if (!channel) {
+    return successResponse(res, 200, 'No channel found', []);
+  }
+  
+  const limit = 20;
+  const page = parseInt(req.query.page) || 1;
+  const skip = (page - 1) * limit;
+  
+  
+  const channelMessages = await Message.find({ 
+    channelId: channel._id  
+  })
+    .sort({ createdAt: -1 })
     .skip(skip)
     .limit(limit)
-    .populate('senderId',"fullName profilePic");
-
-    if(!channelMessages){
-        AppError('Failed to find messages',400);
-    }
-
-    successResponse(res,200,`Messages retrieved for channel Id : ${channelId}`,channelMessages);
-})
+    .populate('senderId', "fullName profilePic");
+  
+  // Reverse to show oldest first
+  const messages = channelMessages.reverse();
+  
+  successResponse(res, 200, `Messages retrieved for channel Id: ${channel._id}`, messages);
+});
 
 /**
  * @route   POST /api/v1/messages/:receiverId/send
@@ -183,6 +186,16 @@ const sendMessage = asyncHandler(async (req, res) => {
   }
 
   const message = await Message.create(messageData);
+
+  const receiverSocketId = getReceiverSocketId(receiverId);
+  if(receiverSocketId){
+    io.to(receiverSocketId).emit('message',message)
+  }
+
+  const senderSocketId = getReceiverSocketId(senderId);
+  if (senderSocketId) {
+    io.to(senderSocketId).emit('message', message);
+  }
 
   // Update channel timestamp
   await DMChannel.updateOne(
